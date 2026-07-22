@@ -1,0 +1,597 @@
+@import "tailwindcss";
+
+/* ================= LOADING SCREEN ================= */
+
+.loading-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+}
+
+/* ================= LOGO ================= */
+
+.loading-logo {
+  width: 120px;
+  z-index: 10;
+  animation: logoFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-14px) scale(1.06);
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+}
+
+/* loading screen */
+.loading-video{
+    width:260px;
+    height:auto;
+    object-fit:contain;
+    background:transparent;
+}
+
+.loading-text {
+  margin-top: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1E3A8A;
+  animation: fadeText 1.5s ease-in-out infinite;
+}
+
+@keyframes fadeText {
+  0% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.35;
+  }
+}
+
+/* ================= PARTICLES ================= */
+
+.particle {
+  position: absolute;
+  border-radius: 9999px;
+  opacity: 0.18;
+  animation: floatParticle 12s ease-in-out infinite;
+}
+
+/* shapes */
+.particle1 { width: 170px; height: 170px; background: #6ea8fe; top: 8%; left: 8%; }
+.particle2 { width: 120px; height: 120px; background: #3b82f6; top: 18%; right: 12%; animation-delay: 1.5s; }
+.particle3 { width: 90px; height: 90px; background: #22d3ee; bottom: 18%; left: 15%; animation-delay: 2.5s; }
+.particle4 { width: 180px; height: 180px; background: #a5b4fc; bottom: 10%; right: 10%; animation-delay: 3.5s; }
+.particle5 { width: 60px; height: 60px; background: #38bdf8; top: 45%; left: 25%; animation-delay: 3s; }
+.particle6 { width: 80px; height: 80px; background: #60a5fa; top: 55%; right: 30%; animation-delay: 2s; }
+.particle7 { width: 45px; height: 45px; background: #0ea5e9; top: 28%; left: 52%; animation-delay: 4.5s; }
+.particle8 { width: 120px; height: 120px; background: #93c5fd; bottom: 28%; right: 42%; animation-delay: 5.5s; }
+
+@keyframes floatParticle {
+  0% { transform: translate(0px, 0px); }
+  25% { transform: translate(-25px, -30px); }
+  50% { transform: translate(20px, -10px); }
+  75% { transform: translate(-10px, 25px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+/* ================= PAGE ENTRY ANIMATION ================= */
+
+.fade-left {
+  animation: fadeLeft 2.5s ease-out both;
+}
+
+.fade-right {
+  animation: fadeRight 2.5s ease-out both;
+}
+
+.fade-up {
+  animation: fadeUp 2.2s ease-out both;
+}
+
+/* DELAY DIPERLAMBAT */
+.delay-1 {
+  animation-delay: 0.8s;
+}
+
+.delay-2 {
+  animation-delay: 1.4s;
+}
+
+.delay-3 {
+  animation-delay: 2s;
+}
+
+/* keyframes */
+@keyframes fadeLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= FLOAT IMAGE ================= */
+
+.ar-float {
+  animation: floatImage 5s ease-in-out infinite;
+}
+
+@keyframes floatImage {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ================= BUTTON ================= */
+
+.ar-button {
+  transition: all 0.4s ease;
+}
+
+.ar-button:hover {
+  transform: translateY(-5px) scale(1.06);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ================= CHARACTER FLOAT ================= */
+
+.ar-character {
+  animation: floating 5s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+  100% { transform: translateY(0); }
+}
+
+/* ================= FEATURE MATERI ================= */
+
+.feature-materi {
+  opacity: 0;
+  animation: sectionFadeIn 2s ease forwards;
+  animation-delay: 0.5s;
+}
+
+/* kiri */
+.fade-left-delayed {
+  opacity: 0;
+  transform: translateX(-60px);
+  animation: slideLeft 2s ease forwards;
+  animation-delay: 3s;
+}
+
+/* kanan */
+.fade-right-delayed {
+  opacity: 0;
+  transform: translateX(60px);
+  animation: slideRight 2s ease forwards;
+  animation-delay: 3s;
+}
+
+/* container fade */
+@keyframes sectionFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* kiri */
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* kanan */
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+/* ================= DAFTAR BANGUN CARD ================= */
+
+.bangun-card {
+  opacity: 0;
+  transform: scale(0.85) translateY(40px);
+  animation: cardPopIn 1.6s cubic-bezier(0.2, 1.2, 0.3, 1) forwards;
+  animation-delay: 3.5s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* ICON FLOAT */
+.bangun-icon {
+  animation: iconFloatRotate 4s ease-in-out infinite;
+}
+
+/* BUTTON ANIMATION */
+.bangun-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  animation: buttonFadeIn 1.8s ease forwards;
+  animation-delay: 1s;
+  opacity: 0;
+}
+
+/* hover button */
+.bangun-button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* ripple effect */
+.bangun-button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.bangun-button:hover::after {
+  width: 250px;
+  height: 250px;
+  opacity: 0;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes cardPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(40px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes iconFloatRotate {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(6deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes buttonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ================= FEATURE MATERI PREMIUM ANIMATION ================= */
+
+.feature-materi {
+  opacity: 0;
+  animation: fmSectionIn 1.8s ease forwards;
+  animation-delay: 0.3s;
+}
+
+/* kiri masuk */
+.fade-left-delayed {
+  opacity: 0;
+  transform: translateX(-80px);
+  animation: fmLeftIn 1.6s ease forwards;
+  animation-delay: 2s;
+}
+
+/* kanan masuk */
+.fade-right-delayed {
+  opacity: 0;
+  transform: translateX(80px);
+  animation: fmRightIn 1.6s ease forwards;
+  animation-delay: 2s;
+}
+
+/* teks kiri smooth hover */
+.fm-left {
+  transition: transform 0.3s ease;
+}
+
+.fm-left:hover {
+  transform: translateY(-4px);
+}
+
+/* BUTTON glow */
+.fm-button {
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.fm-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* IMAGE floating (INI YANG BIKIN HIDUP) */
+.fm-image {
+  animation: fmFloat 4.5s ease-in-out infinite;
+  transition: transform 0.4s ease;
+}
+
+/* hover image lebih “pop” */
+.fm-image:hover {
+  transform: scale(1.05) rotate(-1deg);
+}
+
+/* SECTION KEYFRAMES */
+@keyframes fmSectionIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fmLeftIn {
+  from {
+    opacity: 0;
+    transform: translateX(-80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fmRightIn {
+  from {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* FLOAT IMAGE (gerak terus) */
+@keyframes fmFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* ================= HERO TYPEWRITER ================= */
+
+.hero-title{
+  min-height:190px;
+  overflow:hidden;
+}
+
+.hero-word{
+  display:inline-block;
+  opacity:0;
+  animation:wordAppear .35s ease forwards;
+}
+
+@keyframes wordAppear{
+
+  from{
+    opacity:0;
+    transform:translateY(18px);
+    filter:blur(5px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+    filter:blur(0);
+  }
+
+}
+
+.cursor{
+
+  display:inline-block;
+
+  width:3px;
+
+  height:58px;
+
+  margin-left:2px;
+
+  background:#1e3a8a;
+
+  animation:cursorBlink .8s infinite;
+
+  vertical-align:bottom;
+
+}
+
+@keyframes cursorBlink{
+
+  50%{
+    opacity:0;
+  }
+
+}
+
+/* ================= FLOAT IMAGE ================= */
+
+.float-image {
+  animation: heroFloat 4s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* ================= HERO BUTTON ================= */
+
+.hero-btn-primary,
+.hero-btn-secondary{
+
+  transition:.35s;
+
+  position:relative;
+
+  overflow:hidden;
+
+}
+
+.hero-btn-primary::before,
+.hero-btn-secondary::before{
+
+  content:"";
+
+  position:absolute;
+
+  left:-120%;
+
+  top:0;
+
+  width:100%;
+
+  height:100%;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.4),
+    transparent
+  );
+
+  transition:.7s;
+
+}
+
+.hero-btn-primary:hover::before,
+.hero-btn-secondary:hover::before{
+
+  left:120%;
+
+}
+
+.hero-btn-primary:hover{
+
+  transform:translateY(-5px) scale(1.05);
+
+  box-shadow:0 15px 30px rgba(30,58,138,.35);
+
+}
+
+.hero-btn-secondary:hover{
+
+  background:#1e3a8a;
+
+  color:white;
+
+  transform:translateY(-5px) scale(1.05);
+
+}
+
+.badge-animation{
+
+  animation:badgePulse 2.5s infinite;
+
+}
+
+@keyframes badgePulse{
+
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.05);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
+
+/* ================= SMOOTH SECTION HIDE ================= */
+
+.hero-section {
+  transition: all 0.6s ease;
+}
+
+.hero-title {
+  min-height: 240px;
+}
+
