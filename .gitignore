@@ -1,0 +1,101 @@
+# ==========================================
+# FRONTEND — VITE / REACT
+# ==========================================
+
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+frontend/.env.*.local
+
+# Tetap izinkan file contoh environment
+!frontend/.env.example
+
+
+# ==========================================
+# BACKEND — PYTHON / FASTAPI
+# ==========================================
+
+backend/.venv/
+backend/venv/
+
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+
+# Tetap izinkan file contoh environment
+!backend/.env.example
+
+backend/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/**/*.pyd
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+
+# ==========================================
+# VERCEL DAN HOSTING
+# ==========================================
+
+.vercel/
+frontend/.vercel/
+
+.railway/
+
+
+# ==========================================
+# LOG
+# ==========================================
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ==========================================
+# EDITOR
+# ==========================================
+
+.vscode/
+.idea/
+
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+# ==========================================
+# WINDOWS DAN MAC
+# ==========================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# ==========================================
+# FILE SEMENTARA
+# ==========================================
+
+*.tmp
+*.temp
+*.bak
+*.cache

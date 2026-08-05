@@ -1,0 +1,824 @@
+/* =========================================
+   COLOR PALETTE VERTEXAR
+========================================= */
+
+.about-page,
+.about-page * {
+  box-sizing: border-box;
+}
+
+.about-page {
+  width: min(1700px, 95vw);
+  margin: 0 auto;
+  padding: 45px 2vw 100px;
+
+  background: #ffffff;
+  color: #183153;
+
+  font-family: "Poppins", sans-serif;
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.about-hero {
+  width: 100%;
+  text-align: center;
+}
+
+.about-main-title {
+  margin: 0;
+
+  color: #0b3b8f;
+
+  font-size: clamp(38px, 4vw, 58px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.about-hero-image-wrapper {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 12px;
+}
+
+.about-hero-image {
+  display: block;
+
+  width: clamp(280px, 28vw, 450px);
+  height: auto;
+
+  object-fit: contain;
+}
+
+/* =========================================
+   APA ITU VERTEXAR
+========================================= */
+
+.about-description-section {
+  width: 100%;
+  margin-top: 75px;
+}
+
+.about-section-title {
+  margin: 0;
+
+  color: #0b3b8f;
+
+  font-size: clamp(32px, 3vw, 46px);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.about-description-text {
+  width: 100%;
+  margin: 25px 0 0;
+
+  color: #344054;
+
+  font-size: clamp(16px, 1.1vw, 20px);
+  line-height: 1.9;
+  text-align: justify;
+}
+
+/* =========================================
+   FITUR WEBSITE
+========================================= */
+
+.about-feature-section {
+  width: 100%;
+  margin-top: 80px;
+  padding: 50px 42px 55px;
+
+  border-radius: 36px;
+
+  background: #ff3e6c;
+
+  box-shadow:
+    10px 12px 26px rgba(11, 59, 143, 0.16),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.about-feature-title {
+  margin: 0;
+
+  color: #dff5ff;
+
+  text-align: center;
+  font-size: clamp(32px, 3vw, 48px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.about-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    5,
+    minmax(0, 1fr)
+  );
+  align-items: stretch;
+
+  gap: 18px;
+  margin-top: 42px;
+}
+
+.about-feature-card {
+  width: 100%;
+  min-height: 245px;
+  padding: 28px 18px;
+
+  border: 0;
+  border-radius: 26px;
+
+  background: #dff5ff;
+  color: #0b3b8f;
+
+  font-family: inherit;
+  text-align: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    7px 9px 0 rgba(11, 59, 143, 0.22),
+    0 8px 15px rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease;
+}
+
+.about-feature-card h3 {
+  margin: 0;
+
+  color: #0b3b8f;
+
+  font-size: clamp(16px, 1.35vw, 21px);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.about-feature-card p {
+  margin: 18px 0 0;
+
+  color: #0b3b8f;
+
+  font-size: clamp(13px, 1vw, 16px);
+  line-height: 1.6;
+}
+
+.about-feature-card:hover {
+  background: #ffffff;
+
+  transform:
+    translateY(-8px)
+    scale(1.035);
+
+  box-shadow:
+    10px 14px 0 rgba(11, 59, 143, 0.18),
+    0 14px 25px rgba(0, 0, 0, 0.12);
+}
+
+.about-feature-card:active {
+  transform: scale(0.97);
+}
+
+.about-feature-card.is-clicked {
+  background: #ffffff;
+
+  transform: scale(1.09);
+
+  box-shadow:
+    0 0 0 5px rgba(223, 245, 255, 0.75),
+    10px 14px 0 rgba(11, 59, 143, 0.18);
+}
+
+.about-feature-card:focus-visible {
+  outline: 4px solid #ffffff;
+  outline-offset: 5px;
+}
+
+/* =========================================
+   DEVELOPER
+========================================= */
+
+.about-developer-section {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(310px, 0.75fr);
+  align-items: center;
+
+  gap: clamp(45px, 7vw, 110px);
+
+  width: 100%;
+  margin-top: 100px;
+}
+
+.about-developer-content {
+  min-width: 0;
+}
+
+/* =========================================
+   TYPEWRITER TITLE
+========================================= */
+
+.about-developer-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  margin: 0;
+
+  font-size: clamp(48px, 5vw, 76px);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -1px;
+}
+
+/*
+  Placeholder membuat ukuran tulisan sudah tersedia
+  sejak awal sehingga paragraf dan foto tidak bergeser.
+*/
+
+.about-developer-title-line {
+  position: relative;
+
+  display: block;
+
+  width: max-content;
+  max-width: 100%;
+  min-height: 1.06em;
+
+  white-space: nowrap;
+}
+
+.about-developer-title-line
+  + .about-developer-title-line {
+  margin-top: 18px;
+}
+
+.about-developer-title-placeholder {
+  display: block;
+
+  visibility: hidden;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.about-developer-title-typed {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: inline-flex;
+  align-items: center;
+
+  white-space: nowrap;
+}
+
+.about-developer-title-blue {
+  color: #0b3b8f;
+}
+
+.about-developer-title-pink {
+  color: #ff3e6c;
+}
+
+.about-typewriter-caret {
+  display: inline-block;
+
+  width: 5px;
+  height: 0.82em;
+  margin-left: 8px;
+
+  border-radius: 999px;
+  background: currentColor;
+
+  animation:
+    aboutTypewriterCaretBlink
+    680ms
+    step-end
+    infinite;
+}
+
+@keyframes aboutTypewriterCaretBlink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   DESKRIPSI DEVELOPER
+========================================= */
+
+.about-developer-description {
+  max-width: 1000px;
+  margin: 60px 0 0;
+
+  color: #183153;
+
+  font-size: clamp(16px, 1.25vw, 21px);
+  font-weight: 400;
+  line-height: 2;
+  text-align: left;
+
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+/* =========================================
+   FOTO DEVELOPER
+========================================= */
+
+.about-developer-photo-column {
+  display: flex;
+  justify-content: flex-end;
+
+  width: 100%;
+}
+
+.about-developer-photo-card {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  width: min(390px, 100%);
+  aspect-ratio: 0.84;
+
+  overflow: hidden;
+
+  border-radius: 38px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e9f9ff 0%,
+      #dff5ff 55%,
+      #cceeff 100%
+    );
+
+  box-shadow:
+    16px 18px 28px rgba(11, 59, 143, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.about-developer-photo {
+  display: block;
+
+  width: 91%;
+  height: 96%;
+
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+/* =========================================
+   LAYAR MENENGAH
+========================================= */
+
+@media (max-width: 1250px) {
+  .about-feature-grid {
+    grid-template-columns: repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  }
+
+  .about-feature-card {
+    min-height: 220px;
+  }
+
+  .about-developer-section {
+    grid-template-columns:
+      minmax(0, 1.1fr)
+      minmax(300px, 0.9fr);
+
+    gap: 55px;
+  }
+
+  .about-developer-description {
+    margin-top: 45px;
+    line-height: 1.8;
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 900px) {
+  .about-page {
+    width: 94vw;
+    padding: 35px 1vw 80px;
+  }
+
+  .about-description-section {
+    margin-top: 60px;
+  }
+
+  .about-feature-section {
+    margin-top: 65px;
+    padding: 42px 28px 48px;
+
+    border-radius: 30px;
+  }
+
+  .about-feature-grid {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+    gap: 22px;
+  }
+
+  .about-feature-card {
+    min-height: 205px;
+  }
+
+  .about-developer-section {
+    grid-template-columns: 1fr;
+
+    gap: 55px;
+    margin-top: 80px;
+  }
+
+  .about-developer-title {
+    font-size: clamp(45px, 8vw, 65px);
+  }
+
+  .about-developer-title-line
+    + .about-developer-title-line {
+    margin-top: 13px;
+  }
+
+  .about-typewriter-caret {
+    width: 4px;
+    margin-left: 6px;
+  }
+
+  .about-developer-photo-column {
+    justify-content: center;
+  }
+
+  .about-developer-photo-card {
+    width: min(370px, 85%);
+  }
+}
+
+/* =========================================
+   HP
+========================================= */
+
+@media (max-width: 600px) {
+  .about-page {
+    width: 100%;
+    padding: 28px 16px 65px;
+  }
+
+  .about-main-title {
+    font-size: 36px;
+  }
+
+  .about-hero-image {
+    width: min(310px, 90%);
+  }
+
+  .about-description-section {
+    margin-top: 50px;
+  }
+
+  .about-section-title {
+    font-size: 29px;
+  }
+
+  .about-description-text {
+    margin-top: 20px;
+
+    font-size: 15px;
+    line-height: 1.75;
+    text-align: left;
+  }
+
+  .about-feature-section {
+    margin-top: 52px;
+    padding: 35px 17px 40px;
+
+    border-radius: 27px;
+  }
+
+  .about-feature-title {
+    font-size: 30px;
+  }
+
+  .about-feature-grid {
+    grid-template-columns: 1fr;
+
+    gap: 19px;
+    margin-top: 32px;
+  }
+
+  .about-feature-card {
+    min-height: auto;
+    padding: 25px 20px;
+
+    border-radius: 22px;
+  }
+
+  .about-feature-card h3 {
+    font-size: 19px;
+  }
+
+  .about-feature-card p {
+    margin-top: 13px;
+    font-size: 14px;
+  }
+
+  .about-feature-card:hover {
+    transform:
+      translateY(-4px)
+      scale(1.015);
+  }
+
+  .about-feature-card.is-clicked {
+    transform: scale(1.04);
+  }
+
+  .about-developer-section {
+    gap: 42px;
+    margin-top: 65px;
+  }
+
+  .about-developer-title {
+    font-size: clamp(40px, 13vw, 56px);
+    letter-spacing: -0.5px;
+  }
+
+  .about-developer-title-line
+    + .about-developer-title-line {
+    margin-top: 9px;
+  }
+
+  .about-typewriter-caret {
+    width: 3px;
+    margin-left: 5px;
+  }
+
+  .about-developer-description {
+    margin-top: 32px;
+
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .about-developer-photo-card {
+    width: min(320px, 92%);
+    border-radius: 30px;
+  }
+}
+
+/* =========================================
+   MINIM ANIMASI
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .about-feature-card {
+    transition: none;
+  }
+
+  .about-typewriter-caret {
+    animation: none;
+  }
+}
+
+/* =========================================
+   PENYEMPURNAAN HP UMUM — 360px s.d. 480px
+   Hanya memengaruhi layar HP dan tidak
+   mengubah tampilan desktop maupun tablet.
+========================================= */
+
+@media (max-width: 480px) {
+  .about-page {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 14px 56px;
+    overflow-x: clip;
+  }
+
+  .about-page,
+  .about-page section,
+  .about-page div,
+  .about-page article,
+  .about-page button {
+    min-width: 0;
+  }
+
+  .about-main-title {
+    font-size: clamp(30px, 9.5vw, 36px);
+    line-height: 1.18;
+    letter-spacing: -0.5px;
+    overflow-wrap: anywhere;
+  }
+
+  .about-hero-image-wrapper {
+    margin-top: 10px;
+  }
+
+  .about-hero-image {
+    width: min(280px, 88vw);
+  }
+
+  .about-description-section {
+    margin-top: 42px;
+  }
+
+  .about-section-title {
+    font-size: clamp(27px, 8vw, 31px);
+    line-height: 1.22;
+  }
+
+  .about-description-text {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.72;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .about-feature-section {
+    width: 100%;
+    margin-top: 44px;
+    padding: 30px 14px 34px;
+    border-radius: 24px;
+    box-shadow:
+      6px 8px 18px rgba(11, 59, 143, 0.14),
+      0 6px 14px rgba(0, 0, 0, 0.07);
+  }
+
+  .about-feature-title {
+    font-size: clamp(27px, 8.5vw, 31px);
+  }
+
+  .about-feature-grid {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 26px;
+  }
+
+  .about-feature-card {
+    width: 100%;
+    min-height: 0;
+    padding: 22px 17px;
+    border-radius: 20px;
+    box-shadow:
+      5px 7px 0 rgba(11, 59, 143, 0.19),
+      0 7px 13px rgba(0, 0, 0, 0.07);
+  }
+
+  .about-feature-card h3 {
+    font-size: 18px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .about-feature-card p {
+    margin-top: 11px;
+    font-size: 13px;
+    line-height: 1.58;
+    overflow-wrap: anywhere;
+  }
+
+  .about-feature-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .about-feature-card:active,
+  .about-feature-card.is-clicked {
+    transform: scale(0.985);
+  }
+
+  .about-developer-section {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+    margin-top: 54px;
+  }
+
+  .about-developer-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .about-developer-title {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(34px, 11.5vw, 46px);
+    line-height: 1.05;
+    letter-spacing: -0.4px;
+  }
+
+  .about-developer-title-line {
+    max-width: 100%;
+  }
+
+  .about-developer-title-line
+    + .about-developer-title-line {
+    margin-top: 7px;
+  }
+
+  .about-typewriter-caret {
+    width: 3px;
+    margin-left: 4px;
+  }
+
+  .about-developer-description {
+    width: 100%;
+    margin-top: 26px;
+    font-size: 14px;
+    line-height: 1.72;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .about-developer-photo-column {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .about-developer-photo-card {
+    width: min(280px, 88vw);
+    border-radius: 26px;
+    box-shadow:
+      10px 12px 20px rgba(11, 59, 143, 0.18),
+      0 6px 15px rgba(0, 0, 0, 0.07);
+  }
+
+  .about-developer-photo {
+    width: 92%;
+    height: 96%;
+  }
+}
+
+/* HP sangat kecil, misalnya lebar 320px–359px. */
+
+@media (max-width: 359px) {
+  .about-page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .about-main-title {
+    font-size: 29px;
+  }
+
+  .about-hero-image {
+    width: min(250px, 86vw);
+  }
+
+  .about-feature-section {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .about-feature-card {
+    padding: 20px 14px;
+  }
+
+  .about-developer-title {
+    font-size: clamp(31px, 11vw, 38px);
+  }
+
+  .about-developer-photo-card {
+    width: min(250px, 86vw);
+  }
+}
+
+/* Pada perangkat sentuh, hindari efek hover yang tertinggal. */
+
+@media (hover: none) and (pointer: coarse) {
+  .about-feature-card:hover {
+    background: #dff5ff;
+    transform: none;
+    box-shadow:
+      7px 9px 0 rgba(11, 59, 143, 0.22),
+      0 8px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .about-feature-card:active,
+  .about-feature-card.is-clicked {
+    background: #ffffff;
+    transform: scale(0.985);
+  }
+}

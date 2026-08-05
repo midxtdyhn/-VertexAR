@@ -1,0 +1,2034 @@
+:root {
+  --vertex-ai-blue: #073b91;
+  --vertex-ai-blue-bright: #075ddd;
+  --vertex-ai-blue-dark: #052f78;
+  --vertex-ai-blue-light: #e9f4ff;
+  --vertex-ai-sky: #dff5ff;
+  --vertex-ai-pink: #ff2d55;
+  --vertex-ai-white: #ffffff;
+  --vertex-ai-text: #183153;
+  --vertex-ai-muted: #718096;
+}
+
+
+/* =========================================================
+   RESET KHUSUS AI
+========================================================= */
+
+.vertex-ai-panel,
+.vertex-ai-panel *,
+.vertex-ai-floating-button,
+.vertex-ai-backdrop {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FLOATING BUTTON
+========================================================= */
+
+.vertex-ai-floating-button {
+  position: fixed;
+  z-index: 1002;
+  right: 28px;
+  bottom: 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-width: 64px;
+  height: 58px;
+  padding: 0 18px;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    linear-gradient(
+      135deg,
+      #0b64da,
+      var(--vertex-ai-blue)
+    );
+
+  border: 3px solid
+    var(--vertex-ai-white);
+  border-radius: 999px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+
+  box-shadow:
+    0 10px 25px
+      rgba(7, 59, 145, 0.35),
+    0 3px 0
+      rgba(0, 0, 0, 0.12);
+
+  transition:
+    transform 220ms
+      cubic-bezier(
+        0.22,
+        1,
+        0.36,
+        1
+      ),
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+
+.vertex-ai-floating-button:hover {
+  transform:
+    translateY(-5px)
+    scale(1.04);
+
+  box-shadow:
+    0 15px 32px
+      rgba(7, 59, 145, 0.42),
+    0 4px 0
+      rgba(0, 0, 0, 0.1);
+}
+
+
+.vertex-ai-floating-button:focus-visible {
+  outline: 4px solid
+    rgba(7, 93, 221, 0.24);
+  outline-offset: 4px;
+}
+
+
+.vertex-ai-floating-button.is-open {
+  width: 58px;
+  min-width: 58px;
+  padding: 0;
+
+  background:
+    var(--vertex-ai-pink);
+}
+
+
+.vertex-ai-floating-button svg {
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+}
+
+
+.vertex-ai-floating-button.is-open svg {
+  width: 24px;
+  height: 24px;
+}
+
+
+.vertex-ai-floating-label {
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+.vertex-ai-panel {
+  position: fixed;
+  z-index: 1001;
+  top: 18px;
+  right: 18px;
+  bottom: 96px;
+
+  display: flex;
+  flex-direction: column;
+
+  width:
+    min(
+      440px,
+      calc(100vw - 36px)
+    );
+
+  overflow: hidden;
+
+  color:
+    var(--vertex-ai-text);
+
+  background:
+    var(--vertex-ai-white);
+
+  border: 1px solid
+    rgba(7, 59, 145, 0.14);
+  border-radius: 28px;
+
+  box-shadow:
+    0 24px 65px
+      rgba(7, 59, 145, 0.28),
+    0 6px 18px
+      rgba(0, 0, 0, 0.08);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform:
+    translateX(35px)
+    scale(0.96);
+
+  transform-origin:
+    right bottom;
+
+  transition:
+    opacity 260ms ease,
+    visibility 260ms ease,
+    transform 300ms
+      cubic-bezier(
+        0.22,
+        1,
+        0.36,
+        1
+      );
+}
+
+
+.vertex-ai-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform:
+    translateX(0)
+    scale(1);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.vertex-ai-header {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 12px;
+
+  min-height: 86px;
+  padding: 13px 16px;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    linear-gradient(
+      110deg,
+      var(--vertex-ai-blue-bright),
+      var(--vertex-ai-blue)
+    );
+}
+
+
+.vertex-ai-header-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  border: 0;
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+
+.vertex-ai-header-icon-button:hover {
+  background:
+    rgba(255, 255, 255, 0.25);
+
+  transform: scale(1.05);
+}
+
+
+.vertex-ai-header-icon-button:focus-visible {
+  outline: 3px solid
+    rgba(255, 255, 255, 0.55);
+  outline-offset: 2px;
+}
+
+
+.vertex-ai-header-icon-button svg {
+  width: 23px;
+  height: 23px;
+}
+
+
+.vertex-ai-header-identity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+
+  min-width: 0;
+}
+
+
+.vertex-ai-header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+
+  color:
+    var(--vertex-ai-blue);
+
+  background:
+    var(--vertex-ai-white);
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 5px 12px
+      rgba(0, 0, 0, 0.09);
+}
+
+
+.vertex-ai-header-logo svg {
+  width: 28px;
+  height: 28px;
+}
+
+
+.vertex-ai-header-text {
+  min-width: 0;
+}
+
+
+.vertex-ai-header-identity h2 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color:
+    var(--vertex-ai-white);
+
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.vertex-ai-header-identity p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 4px 0 0;
+
+  overflow: hidden;
+
+  color:
+    rgba(255, 255, 255, 0.9);
+
+  font-size: 11px;
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.vertex-ai-status-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+}
+
+
+.vertex-ai-status-dot.is-online {
+  background: #5cff89;
+
+  box-shadow:
+    0 0 0 3px
+      rgba(92, 255, 137, 0.18);
+}
+
+
+.vertex-ai-status-dot.is-offline {
+  background: #ffbd59;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.vertex-ai-panel-body {
+  position: relative;
+
+  min-height: 0;
+  flex: 1;
+
+  overflow: hidden;
+}
+
+
+.vertex-ai-chat-area {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7fbff 0%,
+      #ffffff 43%
+    );
+}
+
+
+/* =========================================================
+   HISTORY PANEL
+========================================================= */
+
+.vertex-ai-history-panel {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 22px 18px;
+
+  background:
+    var(--vertex-ai-white);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform:
+    translateX(-100%);
+
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease,
+    transform 280ms
+      cubic-bezier(
+        0.22,
+        1,
+        0.36,
+        1
+      );
+}
+
+
+.vertex-ai-history-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform:
+    translateX(0);
+}
+
+
+.vertex-ai-history-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+
+.vertex-ai-history-header h3 {
+  margin: 0;
+
+  color:
+    var(--vertex-ai-blue);
+
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+
+.vertex-ai-history-header p {
+  margin: 4px 0 0;
+
+  color:
+    var(--vertex-ai-muted);
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+.vertex-ai-new-chat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    var(--vertex-ai-blue);
+
+  border: 0;
+  border-radius: 13px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+
+.vertex-ai-new-chat-icon:hover {
+  background: #0b55bd;
+
+  transform: scale(1.05);
+}
+
+
+.vertex-ai-new-chat-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+
+.vertex-ai-history-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 46px;
+  margin-top: 21px;
+  padding: 0 14px;
+
+  color: #6b7f99;
+  background: #f2f7fd;
+
+  border: 1px solid #dce8f5;
+  border-radius: 14px;
+
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+
+.vertex-ai-history-search:focus-within {
+  border-color: #87baf4;
+
+  box-shadow:
+    0 0 0 3px
+      rgba(7, 93, 221, 0.08);
+}
+
+
+.vertex-ai-history-search svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+
+.vertex-ai-history-search input {
+  width: 100%;
+  min-width: 0;
+
+  color:
+    var(--vertex-ai-text);
+
+  background: transparent;
+
+  border: 0;
+  outline: 0;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  font-size: 13px;
+}
+
+
+.vertex-ai-history-search input::placeholder {
+  color: #8b9caf;
+}
+
+
+.vertex-ai-new-chat-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  min-height: 45px;
+  margin-top: 13px;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    var(--vertex-ai-blue);
+
+  border: 0;
+  border-radius: 14px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+
+.vertex-ai-new-chat-button:hover {
+  background: #0b55bd;
+
+  transform:
+    translateY(-2px);
+}
+
+
+.vertex-ai-new-chat-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+
+.vertex-ai-history-list {
+  min-height: 0;
+  flex: 1;
+
+  margin-top: 15px;
+
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color:
+    #9aa8b8 transparent;
+}
+
+
+.vertex-ai-history-item {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 6px;
+
+  width: 100%;
+  min-height: 60px;
+  margin-bottom: 8px;
+  padding: 7px;
+
+  color:
+    var(--vertex-ai-text);
+
+  background: #f5f8fc;
+
+  border: 1px solid transparent;
+  border-radius: 14px;
+
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+
+.vertex-ai-history-item:hover {
+  background: #edf5ff;
+
+  transform:
+    translateX(3px);
+}
+
+
+.vertex-ai-history-item.is-active {
+  color:
+    var(--vertex-ai-blue);
+
+  background: #e4f1ff;
+
+  border-color: #b9d8fc;
+}
+
+
+.vertex-ai-history-select {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+
+  color: inherit;
+  background: transparent;
+
+  border: 0;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+
+.vertex-ai-history-select strong {
+  width: 100%;
+
+  overflow: hidden;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.vertex-ai-history-select small {
+  color: #718096;
+
+  font-size: 9px;
+}
+
+
+.vertex-ai-delete-chat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  color: #8190a3;
+  background: transparent;
+
+  border: 0;
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+
+.vertex-ai-delete-chat:hover {
+  color:
+    var(--vertex-ai-pink);
+
+  background: #ffe8ed;
+
+  transform: scale(1.05);
+}
+
+
+.vertex-ai-delete-chat svg {
+  width: 17px;
+  height: 17px;
+}
+
+
+.vertex-ai-history-empty {
+  margin-top: 30px;
+  padding: 20px;
+
+  color: #7b8a9d;
+  background: #f5f8fc;
+
+  border-radius: 14px;
+
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+
+/* =========================================================
+   CHAT TOPBAR
+========================================================= */
+
+.vertex-ai-chat-topbar {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+
+  padding: 11px 15px 0;
+}
+
+
+.vertex-ai-chat-topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 35px;
+  padding: 7px 13px;
+
+  color:
+    var(--vertex-ai-blue);
+
+  background: #e8f3ff;
+
+  border: 0;
+  border-radius: 999px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 170ms ease,
+    transform 170ms ease;
+}
+
+
+.vertex-ai-chat-topbar button:hover {
+  background: #d8ebff;
+
+  transform:
+    translateY(-2px);
+}
+
+
+.vertex-ai-chat-topbar button svg {
+  width: 15px;
+  height: 15px;
+}
+
+
+/* =========================================================
+   CHAT MESSAGES
+========================================================= */
+
+.vertex-ai-messages {
+  min-height: 0;
+  flex: 1;
+
+  padding: 14px 16px 22px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color:
+    #9aa8b8 transparent;
+}
+
+
+.vertex-ai-messages::-webkit-scrollbar,
+.vertex-ai-history-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+
+.vertex-ai-messages::-webkit-scrollbar-thumb,
+.vertex-ai-history-list::-webkit-scrollbar-thumb {
+  background: #9aa8b8;
+
+  border-radius: 999px;
+}
+
+
+.vertex-ai-message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  width: 100%;
+  margin-bottom: 17px;
+}
+
+
+.vertex-ai-message-row.is-assistant {
+  justify-content: flex-start;
+
+  padding-right: 4px;
+}
+
+
+.vertex-ai-message-row.is-user {
+  justify-content: flex-end;
+
+  padding-left: 54px;
+}
+
+
+.vertex-ai-message-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    var(--vertex-ai-blue);
+
+  border-radius: 10px;
+
+  box-shadow:
+    0 4px 9px
+      rgba(7, 59, 145, 0.17);
+}
+
+
+.vertex-ai-message-avatar svg {
+  width: 20px;
+  height: 20px;
+}
+
+
+.vertex-ai-message-content {
+  width: auto;
+  max-width:
+    calc(100% - 42px);
+
+  padding: 13px 15px;
+
+  color:
+    var(--vertex-ai-text);
+
+  background:
+    var(--vertex-ai-white);
+
+  border: 1px solid #e0eaf5;
+  border-radius:
+    7px 18px 18px 18px;
+
+  box-shadow:
+    0 5px 14px
+      rgba(7, 59, 145, 0.07);
+}
+
+
+.vertex-ai-message-row.is-assistant
+  .vertex-ai-message-content {
+  width:
+    calc(100% - 42px);
+}
+
+
+.vertex-ai-message-row.is-user
+  .vertex-ai-message-content {
+  width: fit-content;
+  max-width: 85%;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    linear-gradient(
+      135deg,
+      #0c61d4,
+      var(--vertex-ai-blue)
+    );
+
+  border: 0;
+  border-radius:
+    18px 7px 18px 18px;
+
+  box-shadow:
+    0 6px 15px
+      rgba(7, 59, 145, 0.17);
+}
+
+
+.vertex-ai-message-content > p {
+  margin: 0;
+
+  font-size: 12.5px;
+  line-height: 1.65;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   MARKDOWN JAWABAN AI
+========================================================= */
+
+.vertex-ai-markdown {
+  color:
+    var(--vertex-ai-text);
+
+  font-size: 12.5px;
+  line-height: 1.72;
+
+  overflow-wrap: anywhere;
+}
+
+
+.vertex-ai-markdown > :first-child {
+  margin-top: 0;
+}
+
+
+.vertex-ai-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+
+.vertex-ai-markdown p {
+  margin: 0 0 11px;
+
+  white-space: normal;
+}
+
+
+.vertex-ai-markdown strong {
+  color:
+    var(--vertex-ai-blue);
+
+  font-weight: 800;
+}
+
+
+.vertex-ai-markdown em {
+  color: #365777;
+}
+
+
+.vertex-ai-markdown h1,
+.vertex-ai-markdown h2,
+.vertex-ai-markdown h3,
+.vertex-ai-markdown h4 {
+  margin: 15px 0 7px;
+
+  color:
+    var(--vertex-ai-blue);
+
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+
+.vertex-ai-markdown h1 {
+  font-size: 17px;
+}
+
+
+.vertex-ai-markdown h2 {
+  font-size: 15px;
+}
+
+
+.vertex-ai-markdown h3,
+.vertex-ai-markdown h4 {
+  font-size: 13.5px;
+}
+
+
+.vertex-ai-markdown ul,
+.vertex-ai-markdown ol {
+  margin: 7px 0 12px;
+  padding-left: 21px;
+}
+
+
+.vertex-ai-markdown li {
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+
+
+.vertex-ai-markdown li::marker {
+  color:
+    var(--vertex-ai-blue);
+
+  font-weight: 700;
+}
+
+
+.vertex-ai-markdown code {
+  padding: 2px 5px;
+
+  color:
+    var(--vertex-ai-blue);
+
+  background: #eaf4ff;
+
+  border-radius: 5px;
+
+  font-family:
+    "Courier New",
+    monospace;
+  font-size: 11.5px;
+}
+
+
+.vertex-ai-markdown pre {
+  max-width: 100%;
+  margin: 10px 0;
+  padding: 11px;
+
+  overflow-x: auto;
+
+  color: #ffffff;
+  background: #102a4c;
+
+  border-radius: 10px;
+}
+
+
+.vertex-ai-markdown pre code {
+  padding: 0;
+
+  color: inherit;
+  background: transparent;
+}
+
+
+.vertex-ai-markdown blockquote {
+  margin: 10px 0;
+  padding: 9px 12px;
+
+  color: #34597f;
+  background: #eef6ff;
+
+  border-left: 4px solid
+    #0b64da;
+  border-radius:
+    0 10px 10px 0;
+}
+
+
+.vertex-ai-markdown a {
+  color: #075ddd;
+
+  font-weight: 600;
+}
+
+
+.vertex-ai-markdown hr {
+  margin: 13px 0;
+
+  border: 0;
+  border-top:
+    1px solid #dce7f2;
+}
+
+
+.vertex-ai-markdown table {
+  display: block;
+
+  width: 100%;
+  margin: 11px 0;
+
+  overflow-x: auto;
+
+  border-collapse: collapse;
+}
+
+
+.vertex-ai-markdown th,
+.vertex-ai-markdown td {
+  padding: 7px 9px;
+
+  border: 1px solid #d4e2f2;
+
+  font-size: 11px;
+  text-align: left;
+}
+
+
+.vertex-ai-markdown th {
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    var(--vertex-ai-blue);
+}
+
+
+/* =========================================================
+   TYPING
+========================================================= */
+
+.vertex-ai-typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  width: auto !important;
+  min-width: 64px;
+  min-height: 41px;
+}
+
+
+.vertex-ai-typing span {
+  width: 7px;
+  height: 7px;
+
+  background: #7398c7;
+
+  border-radius: 50%;
+
+  animation:
+    vertexAiTyping 1.1s
+    ease-in-out infinite;
+}
+
+
+.vertex-ai-typing span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+
+.vertex-ai-typing span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+
+@keyframes vertexAiTyping {
+  0%,
+  70%,
+  100% {
+    opacity: 0.35;
+
+    transform:
+      translateY(0);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform:
+      translateY(-5px);
+  }
+}
+
+
+/* =========================================================
+   QUICK QUESTIONS
+========================================================= */
+
+.vertex-ai-quick-questions {
+  flex-shrink: 0;
+
+  padding: 0 16px 13px;
+}
+
+
+.vertex-ai-quick-questions > p {
+  margin: 0 0 8px;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+.vertex-ai-quick-questions > div {
+  display: flex;
+  gap: 7px;
+
+  padding-bottom: 2px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+
+.vertex-ai-quick-questions
+  > div::-webkit-scrollbar {
+  display: none;
+}
+
+
+.vertex-ai-quick-questions button {
+  flex-shrink: 0;
+
+  padding: 8px 11px;
+
+  color:
+    var(--vertex-ai-blue);
+
+  background: #eaf4ff;
+
+  border: 1px solid #c9e1fb;
+  border-radius: 999px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+
+.vertex-ai-quick-questions button:hover:not(:disabled) {
+  background: #d7ebff;
+
+  transform:
+    translateY(-2px);
+}
+
+
+.vertex-ai-quick-questions button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.vertex-ai-error {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+
+  margin: 0 16px 10px;
+  padding: 10px 12px;
+
+  color: #9d1730;
+  background: #fff0f3;
+
+  border: 1px solid #ffd0da;
+  border-radius: 12px;
+}
+
+
+.vertex-ai-error strong {
+  font-size: 10.5px;
+}
+
+
+.vertex-ai-error span {
+  font-size: 9.5px;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.vertex-ai-input-area {
+  flex-shrink: 0;
+
+  padding: 13px 14px 11px;
+
+  background:
+    var(--vertex-ai-white);
+
+  border-top:
+    1px solid #e8eef5;
+}
+
+
+.vertex-ai-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 61px;
+  padding: 8px 8px 8px 17px;
+
+  background: #f5f8fc;
+
+  border: 1px solid #dce7f2;
+  border-radius: 19px;
+
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+
+.vertex-ai-input-wrapper:focus-within {
+  border-color: #87baf4;
+
+  box-shadow:
+    0 0 0 3px
+      rgba(7, 93, 221, 0.09);
+}
+
+
+.vertex-ai-input-wrapper textarea {
+  display: block;
+
+  width: 100%;
+  height: 24px;
+  min-height: 24px;
+  max-height: 112px;
+  padding: 0;
+
+  overflow-y: auto;
+
+  resize: none;
+
+  color:
+    var(--vertex-ai-text);
+
+  background: transparent;
+
+  border: 0;
+  outline: 0;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 24px;
+
+  scrollbar-width: thin;
+}
+
+
+.vertex-ai-input-wrapper textarea::placeholder {
+  color: #8b9caf;
+
+  opacity: 1;
+}
+
+
+.vertex-ai-input-wrapper textarea:disabled {
+  cursor: not-allowed;
+}
+
+
+.vertex-ai-input-wrapper button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+
+  color:
+    var(--vertex-ai-white);
+
+  background:
+    var(--vertex-ai-blue);
+
+  border: 0;
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+
+.vertex-ai-input-wrapper button:hover:not(:disabled) {
+  background: #0b55bd;
+
+  transform: scale(1.06);
+}
+
+
+.vertex-ai-input-wrapper button:disabled {
+  opacity: 0.42;
+
+  cursor: not-allowed;
+}
+
+
+.vertex-ai-input-wrapper button svg {
+  width: 21px;
+  height: 21px;
+
+  transform:
+    translateX(1px);
+}
+
+
+.vertex-ai-input-area > p {
+  margin: 8px 0 0;
+
+  color: #8a97a8;
+
+  font-size: 8.5px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+
+/* =========================================================
+   BACKDROP
+========================================================= */
+
+.vertex-ai-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+
+  display: none;
+
+  padding: 0;
+
+  background:
+    rgba(7, 22, 50, 0.3);
+
+  border: 0;
+}
+
+
+/* =========================================================
+   RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+  .vertex-ai-floating-button {
+    right: 17px;
+    bottom: 17px;
+
+    height: 54px;
+    padding: 0 15px;
+  }
+
+  .vertex-ai-panel {
+    top: 10px;
+    right: 10px;
+    bottom: 82px;
+
+    width:
+      calc(100vw - 20px);
+
+    border-radius: 24px;
+  }
+
+  .vertex-ai-backdrop {
+    display: block;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE HP
+========================================================= */
+
+@media (max-width: 480px) {
+  .vertex-ai-panel {
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100vw;
+
+    border: 0;
+    border-radius: 0;
+  }
+
+  .vertex-ai-floating-button.is-open {
+    z-index: 1003;
+    right: 13px;
+    bottom: 13px;
+  }
+
+  .vertex-ai-header {
+    grid-template-columns:
+      42px minmax(0, 1fr) 42px;
+
+    min-height: 78px;
+    padding: 11px 12px;
+  }
+
+  .vertex-ai-header-icon-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .vertex-ai-header-logo {
+    width: 41px;
+    height: 41px;
+  }
+
+  .vertex-ai-header-identity {
+    gap: 8px;
+  }
+
+  .vertex-ai-header-identity h2 {
+    font-size: 16px;
+  }
+
+  .vertex-ai-header-identity p {
+    font-size: 9.5px;
+  }
+
+  .vertex-ai-message-row.is-user {
+    padding-left: 35px;
+  }
+
+  .vertex-ai-message-row.is-assistant
+    .vertex-ai-message-content {
+    width:
+      calc(100% - 41px);
+  }
+
+  .vertex-ai-message-content {
+    max-width: 88%;
+  }
+
+  .vertex-ai-floating-label {
+    display: none;
+  }
+
+  .vertex-ai-floating-button {
+    width: 56px;
+    min-width: 56px;
+    padding: 0;
+  }
+
+  .vertex-ai-messages {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .vertex-ai-input-area {
+    padding: 11px 12px 10px;
+  }
+
+  .vertex-ai-input-wrapper {
+    min-height: 58px;
+    padding-left: 15px;
+  }
+}
+
+
+/* =========================================================
+   MINIM ANIMASI
+========================================================= */
+
+@media (
+  prefers-reduced-motion: reduce
+) {
+  .vertex-ai-panel,
+  .vertex-ai-floating-button,
+  .vertex-ai-typing span {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* =========================================================
+   AI VERTEXAR — LAYER FIX UNTUK NAVBAR STICKY
+========================================================= */
+
+.vertex-ai-backdrop {
+  z-index: 2199;
+}
+
+.vertex-ai-panel {
+  z-index: 2200;
+}
+
+.vertex-ai-floating-button {
+  z-index: 2201;
+}
+
+/*
+  Pada desktop, chatbot dimulai di bawah navbar.
+  Header dan tombol silang tidak lagi tertutup.
+*/
+
+@media (min-width: 701px) {
+  .vertex-ai-panel {
+    top: 126px;
+    bottom: 22px;
+  }
+
+  .vertex-ai-header {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  .vertex-ai-header-icon-button {
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
+  }
+}
+
+/*
+  Pada tablet dan HP, chatbot tetap menjadi overlay
+  agar ruang chat tidak terlalu sempit.
+*/
+
+@media (max-width: 700px) {
+  .vertex-ai-backdrop {
+    z-index: 2199;
+  }
+
+  .vertex-ai-panel {
+    z-index: 2200;
+    top: 10px;
+  }
+
+  .vertex-ai-floating-button,
+  .vertex-ai-floating-button.is-open {
+    z-index: 2201;
+  }
+}
+
+@media (max-width: 480px) {
+  .vertex-ai-panel {
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+/* =========================================================
+   PERBAIKAN TOMBOL KIRIM AI VERTEXAR
+========================================================= */
+
+/*
+  Tombol merah floating disembunyikan ketika chatbot terbuka.
+  Chatbot tetap dapat ditutup menggunakan tombol X di header.
+*/
+
+.vertex-ai-floating-button.is-open {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+
+  transform:
+    translateY(14px)
+    scale(0.82) !important;
+}
+
+/*
+  Area pengetikan selalu berada pada layer teratas
+  di dalam panel chatbot.
+*/
+
+.vertex-ai-input-area {
+  position: relative;
+  z-index: 20;
+
+  flex-shrink: 0;
+
+  padding:
+    12px
+    14px
+    11px;
+
+  background: #ffffff;
+}
+
+/*
+  Pembungkus input tidak boleh tertutup elemen lain.
+*/
+
+.vertex-ai-input-wrapper {
+  position: relative;
+  z-index: 21;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+
+  width: 100%;
+
+  padding:
+    8px
+    8px
+    8px
+    13px;
+
+  background: #f5f8fc;
+
+  border:
+    1px solid #dce7f2;
+
+  border-radius: 17px;
+}
+
+/*
+  Textarea mengambil sisa lebar,
+  sedangkan tombol kirim tetap terlihat penuh.
+*/
+
+.vertex-ai-input-wrapper textarea {
+  min-width: 0;
+  flex: 1;
+
+  padding-right: 5px;
+}
+
+/*
+  Tombol kirim dapat diklik dan tidak tertutup
+  tombol atau elemen floating lainnya.
+*/
+
+.vertex-ai-input-wrapper
+button[type="submit"] {
+  position: relative;
+  z-index: 22;
+
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #176fd8,
+      #073b91
+    );
+
+  border: 0;
+  border-radius: 14px;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  box-shadow:
+    0 7px 16px
+    rgba(
+      7,
+      59,
+      145,
+      0.22
+    );
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.vertex-ai-input-wrapper
+button[type="submit"]:not(:disabled):hover {
+  transform:
+    translateY(-2px)
+    scale(1.04);
+
+  box-shadow:
+    0 10px 21px
+    rgba(
+      7,
+      59,
+      145,
+      0.3
+    );
+}
+
+.vertex-ai-input-wrapper
+button[type="submit"]:not(:disabled):active {
+  transform:
+    translateY(0)
+    scale(0.96);
+}
+
+/*
+  Saat pesan kosong tombol tetap terlihat,
+  tetapi tidak dapat diklik.
+*/
+
+.vertex-ai-input-wrapper
+button[type="submit"]:disabled {
+  opacity: 0.42;
+
+  background: #7395c1;
+
+  cursor: not-allowed;
+  pointer-events: none;
+
+  box-shadow: none;
+}
+
+/*
+  Pastikan panel chatbot tetap memiliki ruang
+  yang cukup untuk area input.
+*/
+
+.vertex-ai-chat-area {
+  min-height: 0;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.vertex-ai-messages {
+  min-height: 0;
+  flex: 1;
+
+  overflow-y: auto;
+}
+
+/*
+  Pengaturan tablet dan HP.
+*/
+
+@media (max-width: 700px) {
+  .vertex-ai-floating-button.is-open {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .vertex-ai-input-area {
+    padding:
+      11px
+      12px
+      10px;
+  }
+
+  .vertex-ai-input-wrapper
+  button[type="submit"] {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vertex-ai-floating-button.is-open {
+    display: none !important;
+  }
+
+  .vertex-ai-input-wrapper {
+    padding:
+      7px
+      7px
+      7px
+      12px;
+  }
+}
+
+/* =========================================================
+   POSISI TEKS INPUT AI AGAR LEBIH TENGAH
+========================================================= */
+
+.vertex-ai-input-wrapper {
+  min-height: 82px;
+
+  display: flex;
+  align-items: center;
+
+  padding:
+    8px
+    8px
+    8px
+    16px;
+}
+
+.vertex-ai-input-wrapper textarea {
+  min-height: 46px;
+  max-height: 120px;
+
+  padding:
+    12px
+    4px;
+
+  display: block;
+
+  color: #17365f;
+  background: transparent;
+
+  border: 0;
+  outline: 0;
+
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+
+  resize: none;
+  overflow-y: auto;
+}
+
+.vertex-ai-input-wrapper textarea::placeholder {
+  color: #8297b4;
+  opacity: 1;
+}
+
+.vertex-ai-input-wrapper
+button[type="submit"] {
+  align-self: center;
+}

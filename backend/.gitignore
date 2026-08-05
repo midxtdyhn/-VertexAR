@@ -1,0 +1,35 @@
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Firebase lama
+serviceAccountKey.json
+*serviceAccount*.json
+
+# Database lokal
+vertexar.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Gambar yang diunggah
+uploads/*
+!uploads/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Editor dan sistem
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+.env
+__pycache__/
+*.pyc
+.venv/

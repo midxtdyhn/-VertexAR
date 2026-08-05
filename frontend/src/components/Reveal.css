@@ -1,0 +1,128 @@
+.vertex-reveal {
+  opacity: 0;
+
+  transition:
+    opacity 480ms ease,
+    transform 480ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    );
+
+  transition-delay:
+    var(
+      --reveal-delay,
+      0ms
+    );
+
+  will-change:
+    opacity,
+    transform;
+}
+
+.vertex-reveal--up {
+  transform:
+    translateY(18px);
+}
+
+.vertex-reveal--down {
+  transform:
+    translateY(-18px);
+}
+
+.vertex-reveal--left {
+  transform:
+    translateX(-18px);
+}
+
+.vertex-reveal--right {
+  transform:
+    translateX(18px);
+}
+
+.vertex-reveal--zoom {
+  transform:
+    scale(0.97);
+}
+
+.vertex-reveal--visible {
+  opacity: 1;
+
+  transform:
+    translate3d(
+      0,
+      0,
+      0
+    )
+    scale(1);
+}
+
+/* Hover ringan untuk kartu beranda */
+
+.vertex-home-hover {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.vertex-home-hover:hover {
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 14px 32px
+    rgba(
+      8,
+      64,
+      140,
+      0.13
+    );
+}
+
+/* Animasi lembut untuk gambar utama */
+
+.vertex-home-float {
+  animation:
+    vertexHomeFloat
+    4.5s ease-in-out
+    infinite;
+}
+
+@keyframes vertexHomeFloat {
+  0%,
+  100% {
+    transform:
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(-7px);
+  }
+}
+
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+  .vertex-reveal {
+    opacity: 1;
+
+    transform: none;
+
+    transition: none;
+  }
+
+  .vertex-home-hover,
+  .vertex-home-hover:hover {
+    transform: none;
+
+    transition: none;
+  }
+
+  .vertex-home-float {
+    animation: none;
+  }
+}
