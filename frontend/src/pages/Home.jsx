@@ -1,25 +1,62 @@
-import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 import Hero from "../components/home/Hero";
 import FeatureAR from "../components/home/FeatureAR";
 import FeatureMateri from "../components/home/FeatureMateri";
-import DaftarBangun from "../components/home/DaftarBangun";
 import TujuanMedia from "../components/home/TujuanMedia";
+import PanduanAlur from "../components/home/PanduanAlur";
+
+import Reveal from "../components/Reveal";
+
 
 function Home() {
   return (
     <>
-      <Navbar />
+      <main className="vertex-home">
+        <Reveal
+          direction="up"
+          delay={0}
+        >
+          <Hero />
+        </Reveal>
 
-      <main className="mx-auto w-[92%] py-6">
-        <Hero />
-        <FeatureAR />
-        <FeatureMateri />
-        <DaftarBangun />
-        <TujuanMedia />
+        <div className="vertex-home-sections">
+          <Reveal
+            direction="up"
+            delay={50}
+          >
+            <FeatureAR />
+          </Reveal>
+
+          <Reveal
+            direction="up"
+            delay={80}
+          >
+            <FeatureMateri />
+          </Reveal>
+
+          <Reveal
+            direction="up"
+            delay={100}
+          >
+            <TujuanMedia />
+          </Reveal>
+
+          <Reveal
+            direction="up"
+            delay={120}
+          >
+            <PanduanAlur />
+          </Reveal>
+        </div>
       </main>
-      <Footer />
+
+      <Reveal
+        direction="up"
+        delay={80}
+      >
+        <Footer />
+      </Reveal>
     </>
   );
 }

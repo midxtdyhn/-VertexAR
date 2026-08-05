@@ -1,171 +1,877 @@
-import { useState } from "react";
-import Navbar from "../components/layout/Navbar";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  motion,
+} from "framer-motion";
+
 import Footer from "../components/layout/Footer";
 import ShapeViewer from "../components/viewer/ShapeViewer";
-import karakterAR from "../assets/images/karakter-ar.png";
-import { motion } from "framer-motion";
+
+import mascotVideo from "../assets/videos/mascot-vertexar.webm";
+import karakterFallback from "../assets/images/karakter-ar.png";
+
+
+const SHAPES = [
+  "Kubus",
+  "Balok",
+  "Tabung",
+  "Kerucut",
+  "Limas",
+  "Prisma",
+  "Bola",
+];
+
+
+const revealAnimation = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+  },
+
+  visible: {
+    opacity: 1,
+    y: 0,
+
+    transition: {
+      duration: 0.7,
+      ease: [
+        0.22,
+        1,
+        0.36,
+        1,
+      ],
+    },
+  },
+};
+
+
+/* =========================================================
+   VIDEO WEBM DENGAN PENGHAPUSAN GREEN SCREEN
+========================================================= */
+
+function ChromaKeyVideo({
+  source,
+  fallback,
+}) {
+  const videoRef =
+    useRef(null);
+
+  const canvasRef =
+    useRef(null);
+
+  const stageRef =
+    useRef(null);
+
+  const animationFrameRef =
+    useRef(null);
+
+  const videoFrameRef =
+    useRef(null);
+
+  const lastFrameTimeRef =
+    useRef(0);
+
+  const isVisibleRef =
+    useRef(true);
+
+  const [
+    isReady,
+    setIsReady,
+  ] = useState(false);
+
+  const [
+    hasError,
+    setHasError,
+  ] = useState(false);
+
+
+  useEffect(() => {
+    const video =
+      videoRef.current;
+
+    const canvas =
+      canvasRef.current;
+
+    const stage =
+      stageRef.current;
+
+    if (
+      !video
+      || !canvas
+      || !stage
+    ) {
+      return undefined;
+    }
+
+
+    const context =
+      canvas.getContext(
+        "2d",
+        {
+          alpha: true,
+          willReadFrequently: true,
+        }
+      );
+
+
+    if (!context) {
+      setHasError(true);
+
+      return undefined;
+    }
+
+
+    let stopped = false;
+    let started = false;
+    let firstFrameRendered = false;
+
+
+    function getMaximumCanvasWidth() {
+      /*
+        Desktop tetap memakai ukuran lama.
+        Resolusi hanya diperkecil di HP agar
+        pemrosesan green screen lebih ringan.
+      */
+
+      if (
+        window.innerWidth <= 480
+      ) {
+        return 240;
+      }
+
+      if (
+        window.innerWidth <= 768
+      ) {
+        return 280;
+      }
+
+      return 360;
+    }
+
+
+    function setCanvasSize() {
+      if (
+        video.videoWidth === 0
+        || video.videoHeight === 0
+      ) {
+        return;
+      }
+
+
+      const maximumWidth =
+        getMaximumCanvasWidth();
+
+      const scale =
+        Math.min(
+          1,
+          maximumWidth
+          / video.videoWidth
+        );
+
+
+      const nextWidth =
+        Math.max(
+          1,
+          Math.round(
+            video.videoWidth
+            * scale
+          )
+        );
+
+      const nextHeight =
+        Math.max(
+          1,
+          Math.round(
+            video.videoHeight
+            * scale
+          )
+        );
+
+
+      if (
+        canvas.width
+        !== nextWidth
+      ) {
+        canvas.width =
+          nextWidth;
+      }
+
+
+      if (
+        canvas.height
+        !== nextHeight
+      ) {
+        canvas.height =
+          nextHeight;
+      }
+    }
+
+
+    function processFrame() {
+      if (
+        stopped
+        || !isVisibleRef.current
+        || document.hidden
+        || video.readyState < 2
+        || canvas.width === 0
+        || canvas.height === 0
+      ) {
+        return;
+      }
+
+
+      context.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+
+      context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+
+      let imageData;
+
+
+      try {
+        imageData =
+          context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+      } catch (error) {
+        console.error(
+          "Gagal memproses video:",
+          error
+        );
+
+        stopped = true;
+
+        setHasError(true);
+
+        return;
+      }
+
+
+      const pixels =
+        imageData.data;
+
+
+      for (
+        let index = 0;
+        index < pixels.length;
+        index += 4
+      ) {
+        const red =
+          pixels[index];
+
+        const green =
+          pixels[index + 1];
+
+        const blue =
+          pixels[index + 2];
+
+        const strongestNonGreen =
+          Math.max(
+            red,
+            blue
+          );
+
+        const greenDominance =
+          green
+          - strongestNonGreen;
+
+
+        /*
+          Menghapus background hijau utama.
+        */
+
+        if (
+          green > 72
+          && greenDominance > 20
+          && green > red * 1.1
+          && green > blue * 1.08
+        ) {
+          const removalStrength =
+            Math.min(
+              1,
+              Math.max(
+                0,
+                (
+                  greenDominance
+                  - 20
+                ) / 75
+              )
+            );
+
+
+          pixels[index + 3] =
+            Math.round(
+              255
+              * (
+                1
+                - removalStrength
+              )
+            );
+
+
+          /*
+            Mengurangi warna hijau
+            pada tepi karakter.
+          */
+
+          pixels[index + 1] =
+            Math.round(
+              strongestNonGreen
+              + (
+                green
+                - strongestNonGreen
+              )
+              * 0.06
+            );
+        } else if (
+          greenDominance > 7
+          && green > red
+          && green > blue
+        ) {
+          /*
+            Mengurangi sisa pantulan
+            warna hijau tipis.
+          */
+
+          pixels[index + 1] =
+            Math.round(
+              strongestNonGreen
+              + greenDominance
+              * 0.18
+            );
+        }
+      }
+
+
+      context.putImageData(
+        imageData,
+        0,
+        0
+      );
+
+
+      if (!firstFrameRendered) {
+        firstFrameRendered = true;
+
+        setIsReady(true);
+      }
+    }
+
+
+    function renderWithAnimationFrame(
+      timestamp
+    ) {
+      if (stopped) {
+        return;
+      }
+
+
+      /*
+        Pemrosesan dibatasi sekitar 24 FPS
+        agar tetap ringan pada HP.
+      */
+
+      const frameInterval =
+        1000 / 24;
+
+
+      if (
+        timestamp
+        - lastFrameTimeRef.current
+        >= frameInterval
+      ) {
+        lastFrameTimeRef.current =
+          timestamp;
+
+        processFrame();
+      }
+
+
+      animationFrameRef.current =
+        window.requestAnimationFrame(
+          renderWithAnimationFrame
+        );
+    }
+
+
+    function renderWithVideoFrame() {
+      if (stopped) {
+        return;
+      }
+
+
+      processFrame();
+
+
+      videoFrameRef.current =
+        video.requestVideoFrameCallback(
+          renderWithVideoFrame
+        );
+    }
+
+
+    function startProcessing() {
+      if (started) {
+        return;
+      }
+
+
+      started = true;
+
+      setCanvasSize();
+
+
+      video
+        .play()
+        .catch((error) => {
+          console.warn(
+            "Autoplay video tertahan:",
+            error
+          );
+        });
+
+
+      if (
+        typeof video.requestVideoFrameCallback
+        === "function"
+      ) {
+        videoFrameRef.current =
+          video.requestVideoFrameCallback(
+            renderWithVideoFrame
+          );
+
+        return;
+      }
+
+
+      animationFrameRef.current =
+        window.requestAnimationFrame(
+          renderWithAnimationFrame
+        );
+    }
+
+
+    function handleVideoError() {
+      stopped = true;
+
+      setHasError(true);
+    }
+
+
+    function handleWindowResize() {
+      setCanvasSize();
+    }
+
+
+    function handleVisibilityChange() {
+      if (
+        !document.hidden
+        && video.paused
+      ) {
+        video
+          .play()
+          .catch(() => {
+            /*
+              Tidak perlu menampilkan error.
+              Browser dapat menahan autoplay.
+            */
+          });
+      }
+    }
+
+
+    const observer =
+      new IntersectionObserver(
+        ([entry]) => {
+          isVisibleRef.current =
+            entry.isIntersecting;
+
+          if (
+            entry.isIntersecting
+            && video.paused
+          ) {
+            video
+              .play()
+              .catch(() => {
+                /*
+                  Autoplay dapat tertahan
+                  oleh kebijakan browser.
+                */
+              });
+          }
+        },
+        {
+          root: null,
+          rootMargin: "120px 0px",
+          threshold: 0.01,
+        }
+      );
+
+
+    observer.observe(stage);
+
+
+    video.addEventListener(
+      "loadedmetadata",
+      setCanvasSize
+    );
+
+    video.addEventListener(
+      "loadeddata",
+      startProcessing
+    );
+
+    video.addEventListener(
+      "error",
+      handleVideoError
+    );
+
+    window.addEventListener(
+      "resize",
+      handleWindowResize,
+      {
+        passive: true,
+      }
+    );
+
+    window.addEventListener(
+      "orientationchange",
+      handleWindowResize
+    );
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibilityChange
+    );
+
+
+    if (
+      video.readyState >= 2
+    ) {
+      startProcessing();
+    }
+
+
+    return () => {
+      stopped = true;
+
+      observer.disconnect();
+
+
+      video.removeEventListener(
+        "loadedmetadata",
+        setCanvasSize
+      );
+
+      video.removeEventListener(
+        "loadeddata",
+        startProcessing
+      );
+
+      video.removeEventListener(
+        "error",
+        handleVideoError
+      );
+
+      window.removeEventListener(
+        "resize",
+        handleWindowResize
+      );
+
+      window.removeEventListener(
+        "orientationchange",
+        handleWindowResize
+      );
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange
+      );
+
+
+      if (
+        animationFrameRef.current
+        !== null
+      ) {
+        window.cancelAnimationFrame(
+          animationFrameRef.current
+        );
+      }
+
+
+      if (
+        videoFrameRef.current
+        !== null
+        && typeof video.cancelVideoFrameCallback
+          === "function"
+      ) {
+        video.cancelVideoFrameCallback(
+          videoFrameRef.current
+        );
+      }
+
+
+      video.pause();
+    };
+  }, [source]);
+
+
+  if (hasError) {
+    return (
+      <img
+        src={fallback}
+        alt="Karakter VertexAR membawa perangkat Augmented Reality"
+        className="vertex-ar-video-fallback"
+      />
+    );
+  }
+
+
+  return (
+    <div
+      ref={stageRef}
+      className="vertex-ar-video-stage"
+    >
+      {/*
+        Video asli tetap berjalan,
+        tetapi tidak ditampilkan kepada pengguna.
+      */}
+
+      <video
+        ref={videoRef}
+        className="vertex-ar-video-source"
+        src={source}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        disablePictureInPicture
+        aria-hidden="true"
+      />
+
+      {!isReady && (
+        <img
+          src={fallback}
+          alt=""
+          aria-hidden="true"
+          className="vertex-ar-video-loading"
+        />
+      )}
+
+      <canvas
+        ref={canvasRef}
+        className={[
+          "vertex-ar-video-canvas",
+
+          isReady
+            ? "is-ready"
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        role="img"
+        aria-label="Animasi karakter VertexAR menunjukkan bangun ruang pada tablet"
+      />
+    </div>
+  );
+}
+
+
+/* =========================================================
+   HALAMAN AUGMENTED REALITY
+========================================================= */
 
 function AR() {
-  const shapes = ["Kubus", "Balok", "Tabung", "Kerucut", "Limas", "Prisma", "Bola"];
-  const [selectedShape, setSelectedShape] = useState("Kubus");
+  const [
+    selectedShape,
+    setSelectedShape,
+  ] = useState("Kubus");
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 70 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 1 },
-    },
-  };
-
-  const fadeLeft = {
-    hidden: { opacity: 0, x: -80 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 1 },
-    },
-  };
-
-  const fadeRight = {
-    hidden: { opacity: 0, x: 80 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 1 },
-    },
-  };
 
   return (
     <>
-      <Navbar />
-
-      <main className="mx-auto w-[90%] py-10">
-
-        {/* HEADER */}
-        <motion.section
-          variants={fadeUp}
+      <main className="vertex-ar-page">
+        <motion.header
+          className="vertex-ar-header"
+          variants={revealAnimation}
           initial="hidden"
           animate="visible"
-          className="text-center"
         >
-          <h1 className="text-[clamp(32px,4vw,56px)] font-extrabold text-blue-900">
-            Eksplorasi Tiga Dimensi & Simulasi AR
+          <h1>
+            Eksplorasi Tiga Dimensi &amp; Simulasi AR
           </h1>
 
-          <p className="mx-auto mt-4 max-w-[900px] text-[clamp(16px,1.5vw,22px)] leading-relaxed text-gray-800">
-            Akses visualisasi objek bangun ruang melalui QR Code yang
-            terintegrasi dengan konten Augmented Reality pada platform Assemblr EDU.
+          <p>
+            Akses visualisasi objek bangun ruang melalui
+            QR Code yang terintegrasi dengan konten
+            Augmented Reality pada platform Assemblr EDU.
           </p>
+        </motion.header>
+
+
+        <motion.section
+          className="vertex-ar-viewer-card"
+          variants={revealAnimation}
+          initial="hidden"
+          animate="visible"
+        >
+          <div className="vertex-ar-viewer-header">
+            <h2>
+              Bangun Ruang 3D
+            </h2>
+          </div>
+
+          <div className="vertex-ar-viewer-body">
+            <ShapeViewer
+              selectedShape={
+                selectedShape
+              }
+            />
+          </div>
+
+          <div
+            className="vertex-ar-shape-navigation"
+            aria-label="Pilih bentuk bangun ruang"
+          >
+            {SHAPES.map(
+              (shape) => {
+                const isActive =
+                  selectedShape
+                  === shape;
+
+                return (
+                  <button
+                    key={shape}
+                    type="button"
+                    onClick={() =>
+                      setSelectedShape(
+                        shape
+                      )
+                    }
+                    className={[
+                      "vertex-ar-shape-button",
+
+                      isActive
+                        ? "vertex-ar-shape-button-active"
+                        : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    aria-label={`Tampilkan bangun ruang ${shape}`}
+                    aria-pressed={
+                      isActive
+                    }
+                  >
+                    <span>
+                      {shape}
+                    </span>
+                  </button>
+                );
+              }
+            )}
+          </div>
         </motion.section>
 
-        {/* 3D CARD */}
+
         <motion.section
-          variants={fadeUp}
+          className="vertex-ar-qr-card"
+          variants={revealAnimation}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="mx-auto mt-14 w-[62%] overflow-hidden rounded-[30px] bg-white border border-gray-200 shadow-[0_10px_30px_rgba(0,0,0,0.12)] max-lg:w-[90%] max-md:w-full"
+          viewport={{
+            once: true,
+            amount: 0.2,
+          }}
         >
-          <div className="bg-gradient-to-r from-[#2046B3] to-[#3B82F6] py-5 text-center text-[clamp(28px,3vw,44px)] font-extrabold text-white">
-            Bangun Ruang 3D
-          </div>
-
-          <div className="h-[clamp(330px,34vw,500px)] bg-[#6256ff]">
-            <ShapeViewer selectedShape={selectedShape} />
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-4 bg-gradient-to-r from-[#1D3E9F] via-[#2952C9] to-[#3F74FF] px-6 py-6">
-            {shapes.map((shape) => (
-              <motion.button
-                key={shape}
-                onClick={() => setSelectedShape(shape)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`rounded-full px-7 py-3 text-[clamp(14px,1.2vw,18px)] font-semibold transition-all duration-300 ${
-                  selectedShape === shape
-                    ? "bg-[#B7E3FF] text-[#1547A8] shadow-lg"
-                    : "bg-white text-[#1D3E9F] hover:bg-[#EEF7FF]"
-                }`}
-              >
-                {shape}
-              </motion.button>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* QR SECTION */}
-        <motion.section
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="mx-auto mt-20 w-[62%] rounded-[30px] bg-white border border-gray-200 shadow-[0_8px_25px_rgba(0,0,0,0.12)] px-10 py-8 text-center max-lg:w-[80%] max-md:w-full"
-        >
-          <h2 className="text-[clamp(28px,3vw,44px)] font-extrabold text-blue-900">
-            Visualisasi AR melalui <br /> QR Code
+          <h2>
+            Visualisasi AR melalui
+            <br />
+            QR Code
           </h2>
 
-          <p className="mx-auto mt-4 max-w-[720px] text-[clamp(14px,1.3vw,18px)] leading-relaxed text-blue-900">
-            Pindai QR Code di bawah menggunakan smartphone Anda untuk
-            menampilkan bangun ruang dalam Augmented Reality melalui Assemblr EDU.
+          <p>
+            Pindai QR Code di bawah menggunakan
+            smartphone untuk menampilkan bangun ruang
+            dalam Augmented Reality melalui Assemblr EDU.
           </p>
 
-          <div className="mx-auto mt-8 flex aspect-square w-[clamp(220px,24vw,320px)] items-center justify-center bg-gray-100 font-bold text-gray-600">
-            QR Assemblr EDU
+          <div className="vertex-ar-qr-placeholder">
+            <span>
+              QR Assemblr EDU
+            </span>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="mt-8 rounded-full bg-blue-100 px-10 py-3 text-[clamp(14px,1.2vw,18px)] font-semibold text-blue-900"
-          >
-            Target AR: {selectedShape}
-          </motion.button>
+          <div className="vertex-ar-target">
+            Target AR:{" "}
+
+            <strong>
+              {selectedShape}
+            </strong>
+          </div>
         </motion.section>
 
-        {/* HERO SECTION */}
+
         <motion.section
-          variants={fadeUp}
+          className="vertex-ar-explore"
+          variants={revealAnimation}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="mt-20 grid grid-cols-2 items-center gap-10 max-md:grid-cols-1"
+          viewport={{
+            once: true,
+            amount: 0.2,
+          }}
         >
-          <div>
-            <h1 className="text-[clamp(42px,4vw,62px)] font-black leading-tight text-[#163B8F] drop-shadow-[0_3px_8px_rgba(22,59,143,0.15)]">
-              Ayo Jelajahi Bangun <br />
-              <span className="bg-gradient-to-r from-[#1E40AF] via-[#2563EB] to-[#4F8BFF] bg-clip-text text-transparent">
+          <div className="vertex-ar-explore-content">
+            <h2>
+              Ayo Jelajahi Bangun
+              <br />
+
+              <span>
                 Ruang Lebih Seru!
               </span>
-            </h1>
+            </h2>
 
-            <p className="mt-6 max-w-[720px] text-[clamp(16px,1.6vw,24px)] leading-relaxed text-blue-900">
-              Temukan bentuk bangun ruang secara interaktif melalui model 3D dan
-              Augmented Reality untuk pengalaman belajar yang lebih nyata.
+            <p>
+              Temukan bentuk bangun ruang secara
+              interaktif melalui model 3D dan Augmented
+              Reality untuk pengalaman belajar yang
+              lebih nyata.
             </p>
           </div>
 
-          <motion.div
-            variants={fadeRight}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="flex justify-center lg:justify-end"
-          >
-            <img
-              src={karakterAR}
-              alt="Karakter VertexAR"
-              className="w-[clamp(280px,32vw,470px)] object-contain"
+          <div className="vertex-ar-character-wrapper">
+            <ChromaKeyVideo
+              source={mascotVideo}
+              fallback={karakterFallback}
             />
-          </motion.div>
+          </div>
         </motion.section>
-
       </main>
 
       <Footer />
     </>
   );
 }
+
 
 export default AR;

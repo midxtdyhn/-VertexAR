@@ -1,40 +1,124 @@
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import bangunImage from "../../assets/images/bangun-ruang.png";
+
+const leftAnimation = {
+  hidden: {
+    opacity: 0,
+    x: -70,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.85,
+      ease: [0.22, 1, 0.36, 1],
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const textAnimation = {
+  hidden: {
+    opacity: 0,
+    y: 22,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const imageAnimation = {
+  hidden: {
+    opacity: 0,
+    x: 70,
+    scale: 0.92,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: {
+      duration: 0.85,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
 
 function FeatureMateri() {
   return (
-    <section className="feature-materi mt-10 grid grid-cols-2 items-center gap-10">
-
-      <div className="fm-left fade-left-delayed">
-        <p className="text-sm font-semibold text-blue-900">Fitur Utama</p>
-
-        <h2 className="mt-2 text-[36px] font-extrabold leading-tight text-blue-900">
-          Eksplorasi <br />
-          Materi Bangun Ruang
-        </h2>
-
-        <p className="mt-4 max-w-md text-sm leading-relaxed text-blue-900">
-          Di dalam website ini, kamu dapat mempelajari materi bangun ruang secara
-          lebih interaktif. Setiap bangun ruang disajikan dengan penjelasan yang
-          runtut, lengkap dengan sifat-sifat, unsur, rumus, dan visualisasi tiga
-          dimensi.
-        </p>
-
-        <a
-          href="/bangun-ruang"
-          className="fm-button mt-5 inline-block rounded-full bg-blue-900 px-5 py-2 text-sm font-semibold text-white"
+    <section className="vertex-feature-materi">
+      <div className="vertex-feature-materi-grid">
+        <motion.div
+          className="vertex-feature-materi-content"
+          variants={leftAnimation}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{
+            once: true,
+            amount: 0.3,
+          }}
         >
-          Buka Materi
-        </a>
-      </div>
+          <motion.p
+            variants={textAnimation}
+            className="vertex-feature-materi-label"
+          >
+            Fitur Utama
+          </motion.p>
 
-      <div className="fm-right flex justify-end fade-right-delayed">
-        <img
-          src={bangunImage}
-          alt="Ilustrasi Bangun Ruang"
-          className="fm-image w-[clamp(320px,30vw,470px)]"
-        />
-      </div>
+          <motion.h2
+            variants={textAnimation}
+            className="vertex-feature-materi-title"
+          >
+            Eksplorasi
+            <br />
+            Materi Bangun Ruang
+          </motion.h2>
 
+          <motion.p
+            variants={textAnimation}
+            className="vertex-feature-materi-description"
+          >
+            Di dalam website ini, kamu dapat mempelajari materi bangun ruang
+            secara lebih interaktif. Setiap bangun ruang disajikan dengan
+            penjelasan yang runtut, lengkap dengan sifat-sifat, unsur, rumus,
+            dan visualisasi tiga dimensi sehingga proses belajar menjadi lebih
+            mudah dipahami dan menyenangkan.
+          </motion.p>
+
+          <motion.div variants={textAnimation}>
+            <Link
+              to="/bangun-ruang"
+              className="vertex-action-button"
+            >
+              Buka Materi
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="vertex-feature-materi-visual"
+          variants={imageAnimation}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{
+            once: true,
+            amount: 0.3,
+          }}
+        >
+          <img
+            src={bangunImage}
+            alt="Kumpulan bangun ruang tiga dimensi"
+            className="vertex-feature-materi-image"
+          />
+        </motion.div>
+      </div>
     </section>
   );
 }
