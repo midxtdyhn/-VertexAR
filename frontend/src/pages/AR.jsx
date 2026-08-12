@@ -12,7 +12,19 @@ import Footer from "../components/layout/Footer";
 import ShapeViewer from "../components/viewer/ShapeViewer";
 
 import mascotVideo from "../assets/videos/mascot-vertexar.webm";
-import karakterFallback from "../assets/images/karakter-ar.png";
+
+
+/* =========================================================
+   QR CODE
+========================================================= */
+
+import qrKubus from "../assets/qr/qr-kubus.png";
+import qrBalok from "../assets/qr/qr-balok.png";
+import qrTabung from "../assets/qr/qr-tabung.png";
+import qrKerucut from "../assets/qr/qr-kerucut.png";
+import qrLimas from "../assets/qr/qr-limas.png";
+import qrPrisma from "../assets/qr/qr-prisma.png";
+import qrBola from "../assets/qr/qr-bola.png";
 
 
 const SHAPES = [
@@ -26,6 +38,53 @@ const SHAPES = [
 ];
 
 
+/* =========================================================
+   QR BERDASARKAN BANGUN RUANG
+========================================================= */
+
+const QR_CODES = {
+  Kubus: qrKubus,
+  Balok: qrBalok,
+  Tabung: qrTabung,
+  Kerucut: qrKerucut,
+  Limas: qrLimas,
+  Prisma: qrPrisma,
+  Bola: qrBola,
+};
+
+
+/* =========================================================
+   LINK EMBED ASSEMBLR EDU
+========================================================= */
+
+const ASSEMBLR_EMBED_URLS = {
+  Kubus:
+    "https://viewer.assemblrworld.com/Embed/-iqhSYHPg7KA6w89nmAn",
+
+  Balok:
+    "https://viewer.assemblrworld.com/Embed/-zrZsRvPa6TKrCXXnoR7",
+
+  Tabung:
+    "https://viewer.assemblrworld.com/Embed/-kPacVu8ZJJSmJ7CVYz6",
+
+  Kerucut:
+    "https://viewer.assemblrworld.com/Embed/-EHa8KfftULmi2w3kWrf",
+
+  Limas:
+    "https://viewer.assemblrworld.com/Embed/-buEYwgF23lPeXfHJTeu",
+
+  Prisma:
+    "https://viewer.assemblrworld.com/Embed/-6ZgQLJJncw7KuPxFH2X",
+
+  Bola:
+    "https://viewer.assemblrworld.com/Embed/-EAg6uWGyHHHEHRCZ6qc",
+};
+
+
+/* =========================================================
+   ANIMASI HALAMAN
+========================================================= */
+
 const revealAnimation = {
   hidden: {
     opacity: 0,
@@ -38,6 +97,7 @@ const revealAnimation = {
 
     transition: {
       duration: 0.7,
+
       ease: [
         0.22,
         1,
@@ -50,12 +110,15 @@ const revealAnimation = {
 
 
 /* =========================================================
-   VIDEO WEBM DENGAN PENGHAPUSAN GREEN SCREEN
+   VIDEO WEBM + GREEN SCREEN
+
+   TIDAK ADA FALLBACK IMAGE.
+   Kalau video gagal dimuat, komponen tidak akan membuat
+   seluruh halaman error.
 ========================================================= */
 
 function ChromaKeyVideo({
   source,
-  fallback,
 }) {
   const videoRef =
     useRef(null);
@@ -78,10 +141,12 @@ function ChromaKeyVideo({
   const isVisibleRef =
     useRef(true);
 
+
   const [
     isReady,
     setIsReady,
   ] = useState(false);
+
 
   const [
     hasError,
@@ -98,6 +163,7 @@ function ChromaKeyVideo({
 
     const stage =
       stageRef.current;
+
 
     if (
       !video
@@ -126,28 +192,31 @@ function ChromaKeyVideo({
 
 
     let stopped = false;
-    let started = false;
-    let firstFrameRendered = false;
 
+    let started = false;
+
+    let firstFrameRendered =
+      false;
+
+
+    /* =====================================================
+       UKURAN CANVAS
+    ===================================================== */
 
     function getMaximumCanvasWidth() {
-      /*
-        Desktop tetap memakai ukuran lama.
-        Resolusi hanya diperkecil di HP agar
-        pemrosesan green screen lebih ringan.
-      */
-
       if (
         window.innerWidth <= 480
       ) {
         return 240;
       }
 
+
       if (
         window.innerWidth <= 768
       ) {
         return 280;
       }
+
 
       return 360;
     }
@@ -165,9 +234,11 @@ function ChromaKeyVideo({
       const maximumWidth =
         getMaximumCanvasWidth();
 
+
       const scale =
         Math.min(
           1,
+
           maximumWidth
           / video.videoWidth
         );
@@ -176,15 +247,18 @@ function ChromaKeyVideo({
       const nextWidth =
         Math.max(
           1,
+
           Math.round(
             video.videoWidth
             * scale
           )
         );
 
+
       const nextHeight =
         Math.max(
           1,
+
           Math.round(
             video.videoHeight
             * scale
@@ -210,6 +284,10 @@ function ChromaKeyVideo({
       }
     }
 
+
+    /* =====================================================
+       PROSES GREEN SCREEN
+    ===================================================== */
 
     function processFrame() {
       if (
@@ -258,6 +336,7 @@ function ChromaKeyVideo({
           error
         );
 
+
         stopped = true;
 
         setHasError(true);
@@ -284,20 +363,18 @@ function ChromaKeyVideo({
         const blue =
           pixels[index + 2];
 
+
         const strongestNonGreen =
           Math.max(
             red,
             blue
           );
 
+
         const greenDominance =
           green
           - strongestNonGreen;
 
-
-        /*
-          Menghapus background hijau utama.
-        */
 
         if (
           green > 72
@@ -308,8 +385,10 @@ function ChromaKeyVideo({
           const removalStrength =
             Math.min(
               1,
+
               Math.max(
                 0,
+
                 (
                   greenDominance
                   - 20
@@ -328,14 +407,10 @@ function ChromaKeyVideo({
             );
 
 
-          /*
-            Mengurangi warna hijau
-            pada tepi karakter.
-          */
-
           pixels[index + 1] =
             Math.round(
               strongestNonGreen
+
               + (
                 green
                 - strongestNonGreen
@@ -347,11 +422,6 @@ function ChromaKeyVideo({
           && green > red
           && green > blue
         ) {
-          /*
-            Mengurangi sisa pantulan
-            warna hijau tipis.
-          */
-
           pixels[index + 1] =
             Math.round(
               strongestNonGreen
@@ -369,13 +439,20 @@ function ChromaKeyVideo({
       );
 
 
-      if (!firstFrameRendered) {
-        firstFrameRendered = true;
+      if (
+        !firstFrameRendered
+      ) {
+        firstFrameRendered =
+          true;
 
         setIsReady(true);
       }
     }
 
+
+    /* =====================================================
+       FALLBACK REQUEST ANIMATION FRAME
+    ===================================================== */
 
     function renderWithAnimationFrame(
       timestamp
@@ -384,11 +461,6 @@ function ChromaKeyVideo({
         return;
       }
 
-
-      /*
-        Pemrosesan dibatasi sekitar 24 FPS
-        agar tetap ringan pada HP.
-      */
 
       const frameInterval =
         1000 / 24;
@@ -413,6 +485,10 @@ function ChromaKeyVideo({
     }
 
 
+    /* =====================================================
+       VIDEO FRAME CALLBACK
+    ===================================================== */
+
     function renderWithVideoFrame() {
       if (stopped) {
         return;
@@ -429,6 +505,10 @@ function ChromaKeyVideo({
     }
 
 
+    /* =====================================================
+       START VIDEO
+    ===================================================== */
+
     function startProcessing() {
       if (started) {
         return;
@@ -436,6 +516,7 @@ function ChromaKeyVideo({
 
 
       started = true;
+
 
       setCanvasSize();
 
@@ -459,6 +540,7 @@ function ChromaKeyVideo({
             renderWithVideoFrame
           );
 
+
         return;
       }
 
@@ -470,7 +552,20 @@ function ChromaKeyVideo({
     }
 
 
+    /* =====================================================
+       ERROR VIDEO
+
+       Tidak lagi memakai gambar fallback.
+       Kalau video rusak / terhapus, hanya karakter yang
+       tidak ditampilkan. Halaman tetap aman.
+    ===================================================== */
+
     function handleVideoError() {
+      console.warn(
+        "Video mascot VertexAR gagal dimuat."
+      );
+
+
       stopped = true;
 
       setHasError(true);
@@ -489,15 +584,14 @@ function ChromaKeyVideo({
       ) {
         video
           .play()
-          .catch(() => {
-            /*
-              Tidak perlu menampilkan error.
-              Browser dapat menahan autoplay.
-            */
-          });
+          .catch(() => {});
       }
     }
 
+
+    /* =====================================================
+       HENTIKAN PROSES SAAT TIDAK TERLIHAT
+    ===================================================== */
 
     const observer =
       new IntersectionObserver(
@@ -505,45 +599,55 @@ function ChromaKeyVideo({
           isVisibleRef.current =
             entry.isIntersecting;
 
+
           if (
             entry.isIntersecting
             && video.paused
           ) {
             video
               .play()
-              .catch(() => {
-                /*
-                  Autoplay dapat tertahan
-                  oleh kebijakan browser.
-                */
-              });
+              .catch(() => {});
           }
         },
+
         {
           root: null,
-          rootMargin: "120px 0px",
-          threshold: 0.01,
+
+          rootMargin:
+            "120px 0px",
+
+          threshold:
+            0.01,
         }
       );
 
 
-    observer.observe(stage);
+    observer.observe(
+      stage
+    );
 
+
+    /* =====================================================
+       EVENT LISTENER
+    ===================================================== */
 
     video.addEventListener(
       "loadedmetadata",
       setCanvasSize
     );
 
+
     video.addEventListener(
       "loadeddata",
       startProcessing
     );
 
+
     video.addEventListener(
       "error",
       handleVideoError
     );
+
 
     window.addEventListener(
       "resize",
@@ -553,10 +657,12 @@ function ChromaKeyVideo({
       }
     );
 
+
     window.addEventListener(
       "orientationchange",
       handleWindowResize
     );
+
 
     document.addEventListener(
       "visibilitychange",
@@ -571,8 +677,13 @@ function ChromaKeyVideo({
     }
 
 
+    /* =====================================================
+       CLEANUP
+    ===================================================== */
+
     return () => {
       stopped = true;
+
 
       observer.disconnect();
 
@@ -582,25 +693,30 @@ function ChromaKeyVideo({
         setCanvasSize
       );
 
+
       video.removeEventListener(
         "loadeddata",
         startProcessing
       );
+
 
       video.removeEventListener(
         "error",
         handleVideoError
       );
 
+
       window.removeEventListener(
         "resize",
         handleWindowResize
       );
 
+
       window.removeEventListener(
         "orientationchange",
         handleWindowResize
       );
+
 
       document.removeEventListener(
         "visibilitychange",
@@ -635,51 +751,62 @@ function ChromaKeyVideo({
   }, [source]);
 
 
+  /* =======================================================
+     KALAU VIDEO ERROR
+
+     Tidak return <img>.
+     Hanya tidak menampilkan karakter.
+  ======================================================= */
+
   if (hasError) {
-    return (
-      <img
-        src={fallback}
-        alt="Karakter VertexAR membawa perangkat Augmented Reality"
-        className="vertex-ar-video-fallback"
-      />
-    );
+    return null;
   }
 
+
+  /* =======================================================
+     VIDEO
+  ======================================================= */
 
   return (
     <div
       ref={stageRef}
-      className="vertex-ar-video-stage"
-    >
-      {/*
-        Video asli tetap berjalan,
-        tetapi tidak ditampilkan kepada pengguna.
-      */}
 
+      className={[
+        "vertex-ar-video-stage",
+
+        isReady
+          ? "is-ready"
+          : "is-loading",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <video
         ref={videoRef}
+
         className="vertex-ar-video-source"
+
         src={source}
+
         autoPlay
+
         loop
+
         muted
+
         playsInline
+
         preload="metadata"
+
         disablePictureInPicture
+
         aria-hidden="true"
       />
 
-      {!isReady && (
-        <img
-          src={fallback}
-          alt=""
-          aria-hidden="true"
-          className="vertex-ar-video-loading"
-        />
-      )}
 
       <canvas
         ref={canvasRef}
+
         className={[
           "vertex-ar-video-canvas",
 
@@ -689,7 +816,9 @@ function ChromaKeyVideo({
         ]
           .filter(Boolean)
           .join(" ")}
+
         role="img"
+
         aria-label="Animasi karakter VertexAR menunjukkan bangun ruang pada tablet"
       />
     </div>
@@ -698,28 +827,89 @@ function ChromaKeyVideo({
 
 
 /* =========================================================
-   HALAMAN AUGMENTED REALITY
+   HALAMAN AR
 ========================================================= */
 
 function AR() {
   const [
     selectedShape,
     setSelectedShape,
-  ] = useState("Kubus");
+  ] = useState(
+    "Kubus"
+  );
+
+
+  const [
+    isNetOpen,
+    setIsNetOpen,
+  ] = useState(
+    false
+  );
+
+
+  /* =======================================================
+     GANTI BANGUN RUANG
+  ======================================================= */
+
+  function handleShapeChange(
+    shape
+  ) {
+    setSelectedShape(
+      shape
+    );
+
+
+    setIsNetOpen(
+      false
+    );
+  }
+
+
+  /* =======================================================
+     JARING-JARING
+  ======================================================= */
+
+  function handleToggleNet() {
+    setIsNetOpen(
+      (current) =>
+        !current
+    );
+  }
+
+
+  /* =======================================================
+     EMBED URL
+  ======================================================= */
+
+  const currentEmbedUrl =
+    ASSEMBLR_EMBED_URLS[
+      selectedShape
+    ];
 
 
   return (
     <>
       <main className="vertex-ar-page">
+
+        {/* =================================================
+            HEADER
+        ================================================= */}
+
         <motion.header
           className="vertex-ar-header"
-          variants={revealAnimation}
+
+          variants={
+            revealAnimation
+          }
+
           initial="hidden"
+
           animate="visible"
         >
           <h1>
             Eksplorasi Tiga Dimensi &amp; Simulasi AR
           </h1>
+
 
           <p>
             Akses visualisasi objek bangun ruang melalui
@@ -729,10 +919,19 @@ function AR() {
         </motion.header>
 
 
+        {/* =================================================
+            3D VIEWER
+        ================================================= */}
+
         <motion.section
           className="vertex-ar-viewer-card"
-          variants={revealAnimation}
+
+          variants={
+            revealAnimation
+          }
+
           initial="hidden"
+
           animate="visible"
         >
           <div className="vertex-ar-viewer-header">
@@ -741,73 +940,163 @@ function AR() {
             </h2>
           </div>
 
+
           <div className="vertex-ar-viewer-body">
             <ShapeViewer
               selectedShape={
                 selectedShape
               }
+
+              isNetOpen={
+                isNetOpen
+              }
             />
           </div>
 
+
           <div
             className="vertex-ar-shape-navigation"
-            aria-label="Pilih bentuk bangun ruang"
+
+            aria-label="Kontrol bangun ruang"
+
+            style={{
+              display:
+                "flex",
+
+              flexDirection:
+                "column",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
+
+              gap:
+                "10px",
+            }}
           >
-            {SHAPES.map(
-              (shape) => {
-                const isActive =
-                  selectedShape
-                  === shape;
+            <div
+              style={{
+                width:
+                  "100%",
 
-                return (
-                  <button
-                    key={shape}
-                    type="button"
-                    onClick={() =>
-                      setSelectedShape(
+                display:
+                  "flex",
+
+                alignItems:
+                  "center",
+
+                justifyContent:
+                  "center",
+
+                flexWrap:
+                  "wrap",
+
+                gap:
+                  "12px",
+              }}
+            >
+              {SHAPES.map(
+                (shape) => {
+                  const isActive =
+                    selectedShape
+                    === shape;
+
+
+                  return (
+                    <button
+                      key={
                         shape
-                      )
-                    }
-                    className={[
-                      "vertex-ar-shape-button",
+                      }
 
-                      isActive
-                        ? "vertex-ar-shape-button-active"
-                        : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                    aria-label={`Tampilkan bangun ruang ${shape}`}
-                    aria-pressed={
-                      isActive
-                    }
-                  >
-                    <span>
-                      {shape}
-                    </span>
-                  </button>
-                );
+                      type="button"
+
+                      onClick={() =>
+                        handleShapeChange(
+                          shape
+                        )
+                      }
+
+                      className={[
+                        "vertex-ar-shape-button",
+
+                        isActive
+                          ? "vertex-ar-shape-button-active"
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+
+                      aria-label={`Tampilkan bangun ruang ${shape}`}
+
+                      aria-pressed={
+                        isActive
+                      }
+                    >
+                      <span>
+                        {shape}
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </div>
+
+
+            <button
+              type="button"
+
+              onClick={
+                handleToggleNet
               }
-            )}
+
+              className="vertex-ar-shape-button"
+
+              aria-pressed={
+                isNetOpen
+              }
+            >
+              <span>
+                {isNetOpen
+                  ? "Tutup Jaring-jaring"
+                  : "Buka Jaring-jaring"}
+              </span>
+            </button>
           </div>
         </motion.section>
 
 
+        {/* =================================================
+            QR CODE
+        ================================================= */}
+
         <motion.section
           className="vertex-ar-qr-card"
-          variants={revealAnimation}
+
+          variants={
+            revealAnimation
+          }
+
           initial="hidden"
+
           whileInView="visible"
+
           viewport={{
-            once: true,
-            amount: 0.2,
+            once:
+              true,
+
+            amount:
+              0.2,
           }}
         >
           <h2>
             Visualisasi AR melalui
             <br />
+
             QR Code
           </h2>
+
 
           <p>
             Pindai QR Code di bawah menggunakan
@@ -815,11 +1104,51 @@ function AR() {
             dalam Augmented Reality melalui Assemblr EDU.
           </p>
 
+
           <div className="vertex-ar-qr-placeholder">
-            <span>
-              QR Assemblr EDU
-            </span>
+            <motion.img
+              key={
+                selectedShape
+              }
+
+              src={
+                QR_CODES[
+                  selectedShape
+                ]
+              }
+
+              alt={`QR Code Augmented Reality ${selectedShape}`}
+
+              className="vertex-ar-qr-image"
+
+              initial={{
+                opacity:
+                  0,
+
+                scale:
+                  0.94,
+              }}
+
+              animate={{
+                opacity:
+                  1,
+
+                scale:
+                  1,
+              }}
+
+              transition={{
+                duration:
+                  0.25,
+
+                ease:
+                  "easeOut",
+              }}
+
+              draggable="false"
+            />
           </div>
+
 
           <div className="vertex-ar-target">
             Target AR:{" "}
@@ -831,14 +1160,143 @@ function AR() {
         </motion.section>
 
 
+        {/* =================================================
+            AR EXPERIENCE
+        ================================================= */}
+
+        <motion.section
+          className="vertex-assemblr-card"
+
+          variants={
+            revealAnimation
+          }
+
+          initial="hidden"
+
+          whileInView="visible"
+
+          viewport={{
+            once:
+              true,
+
+            amount:
+              0.1,
+          }}
+        >
+
+          {/* TITLE */}
+
+          <div className="vertex-assemblr-title">
+            <h2>
+              AR Experience
+            </h2>
+          </div>
+
+
+          {/* =================================================
+              EMBED SCREEN
+          ================================================= */}
+
+          <div className="vertex-assemblr-screen">
+            {currentEmbedUrl ? (
+              <iframe
+                key={
+                  `${selectedShape}-assemblr`
+                }
+
+                src={
+                  currentEmbedUrl
+                }
+
+                title={`AR ${selectedShape} Assemblr EDU`}
+
+                className="vertex-assemblr-iframe"
+
+                loading="lazy"
+
+                allow="
+                  camera;
+                  microphone;
+                  accelerometer;
+                  gyroscope;
+                  autoplay;
+                  fullscreen;
+                  xr-spatial-tracking
+                "
+
+                allowFullScreen
+              />
+            ) : (
+              <div className="vertex-assemblr-placeholder">
+                <span>
+                  AR {selectedShape}
+                </span>
+
+
+                <p>
+                  Embed Assemblr EDU akan tampil di sini.
+                </p>
+              </div>
+            )}
+          </div>
+
+
+          {/* =================================================
+              TEXT
+          ================================================= */}
+
+          <div className="vertex-assemblr-description">
+            <h3>
+              Coba Augmented Reality
+              <br />
+
+              Langsung di Sini!
+            </h3>
+
+
+            <p>
+              Jelajahi bangun ruang secara lebih nyata
+              melalui tampilan Augmented Reality dari
+              Assemblr EDU
+            </p>
+          </div>
+
+
+          {/* =================================================
+              TARGET
+          ================================================= */}
+
+          <div className="vertex-assemblr-target">
+            Target AR:{" "}
+
+            <strong>
+              {selectedShape}
+            </strong>
+          </div>
+        </motion.section>
+
+
+        {/* =================================================
+            EXPLORE
+        ================================================= */}
+
         <motion.section
           className="vertex-ar-explore"
-          variants={revealAnimation}
+
+          variants={
+            revealAnimation
+          }
+
           initial="hidden"
+
           whileInView="visible"
+
           viewport={{
-            once: true,
-            amount: 0.2,
+            once:
+              true,
+
+            amount:
+              0.2,
           }}
         >
           <div className="vertex-ar-explore-content">
@@ -851,6 +1309,7 @@ function AR() {
               </span>
             </h2>
 
+
             <p>
               Temukan bentuk bangun ruang secara
               interaktif melalui model 3D dan Augmented
@@ -859,14 +1318,17 @@ function AR() {
             </p>
           </div>
 
+
           <div className="vertex-ar-character-wrapper">
             <ChromaKeyVideo
-              source={mascotVideo}
-              fallback={karakterFallback}
+              source={
+                mascotVideo
+              }
             />
           </div>
         </motion.section>
       </main>
+
 
       <Footer />
     </>

@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import inspect, select, text
 
+
 from app import models
 from app.core.config import (
     UPLOAD_DIRECTORY,
@@ -16,6 +17,7 @@ from app.database import (
     SessionLocal,
     engine,
 )
+
 from app.models import Quiz
 from app.routes.attempts import (
     router as attempts_router,
@@ -28,6 +30,9 @@ from app.routes.quizzes import (
 )
 from app.routes.ai_chat import (
     router as ai_chat_router,
+)
+from app.routes.quiz_settings import (
+    router as quiz_settings_router,
 )
 
 def ensure_default_quiz() -> None:
@@ -53,7 +58,7 @@ def ensure_default_quiz() -> None:
                 "bangun ruang sisi datar dan "
                 "sisi lengkung."
             ),
-            duration_seconds=320,
+            duration_seconds=180,
             is_active=True,
         )
 
@@ -155,6 +160,10 @@ app.include_router(
 
 app.include_router(
     ai_chat_router
+)
+
+app.include_router(
+    quiz_settings_router
 )
 
 

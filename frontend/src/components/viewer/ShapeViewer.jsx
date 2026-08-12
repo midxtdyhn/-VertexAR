@@ -9,10 +9,10 @@ import {
 } from "@react-three/fiber";
 
 import {
-  Edges,
-  Float,
   OrbitControls,
 } from "@react-three/drei";
+
+import FoldingShape from "./FoldingShape";
 
 
 const MOBILE_SCREEN_QUERY =
@@ -30,6 +30,7 @@ function useMobileScreen() {
     ) {
       return false;
     }
+
 
     return window
       .matchMedia(
@@ -69,6 +70,7 @@ function useMobileScreen() {
         handleScreenChange
       );
 
+
       return () => {
         mediaQuery.removeEventListener(
           "change",
@@ -82,6 +84,7 @@ function useMobileScreen() {
       handleScreenChange
     );
 
+
     return () => {
       mediaQuery.removeListener(
         handleScreenChange
@@ -94,232 +97,48 @@ function useMobileScreen() {
 }
 
 
-function ShapeMaterial({
-  showEdges = true,
-}) {
-  return (
-    <>
-      <meshStandardMaterial
-        color="#202276"
-        roughness={0.38}
-        metalness={0.12}
-      />
-
-      {showEdges && (
-        <Edges
-          scale={1.002}
-          threshold={15}
-          color="#5f67c8"
-        />
-      )}
-    </>
-  );
-}
-
-
-function ShapeModel({
-  type,
-}) {
-  return (
-    <Float
-      speed={1.45}
-      rotationIntensity={0.22}
-      floatIntensity={0.28}
-    >
-      {type === "Kubus" && (
-        <mesh
-          rotation={[
-            0.08,
-            -0.45,
-            0.05,
-          ]}
-        >
-          <boxGeometry
-            args={[
-              1.75,
-              1.75,
-              1.75,
-            ]}
-          />
-
-          <ShapeMaterial />
-        </mesh>
-      )}
-
-
-      {type === "Balok" && (
-        <mesh
-          rotation={[
-            0.08,
-            -0.45,
-            0.03,
-          ]}
-        >
-          <boxGeometry
-            args={[
-              2.55,
-              1.55,
-              1.55,
-            ]}
-          />
-
-          <ShapeMaterial />
-        </mesh>
-      )}
-
-
-      {type === "Tabung" && (
-        <mesh
-          rotation={[
-            0.02,
-            -0.35,
-            0,
-          ]}
-        >
-          <cylinderGeometry
-            args={[
-              0.9,
-              0.9,
-              2.15,
-              64,
-            ]}
-          />
-
-          <ShapeMaterial />
-        </mesh>
-      )}
-
-
-      {type === "Kerucut" && (
-        <mesh
-          rotation={[
-            0.02,
-            -0.35,
-            0,
-          ]}
-        >
-          <coneGeometry
-            args={[
-              1.05,
-              2.25,
-              64,
-            ]}
-          />
-
-          <ShapeMaterial />
-        </mesh>
-      )}
-
-
-      {type === "Limas" && (
-        <mesh
-          rotation={[
-            0.02,
-            -0.45,
-            0,
-          ]}
-        >
-          <coneGeometry
-            args={[
-              1.25,
-              2.05,
-              4,
-            ]}
-          />
-
-          <ShapeMaterial />
-        </mesh>
-      )}
-
-
-      {type === "Prisma" && (
-        <mesh
-          rotation={[
-            0,
-            0,
-            Math.PI / 2,
-          ]}
-        >
-          <cylinderGeometry
-            args={[
-              1,
-              1,
-              2.35,
-              3,
-            ]}
-          />
-
-          <ShapeMaterial />
-        </mesh>
-      )}
-
-
-      {type === "Bola" && (
-        <mesh>
-          <sphereGeometry
-            args={[
-              1.15,
-              64,
-              64,
-            ]}
-          />
-
-          <ShapeMaterial
-            showEdges={false}
-          />
-        </mesh>
-      )}
-    </Float>
-  );
-}
-
-
 function ShapeViewer({
   selectedShape,
+  isNetOpen = false,
 }) {
   const isMobile =
     useMobileScreen();
 
 
-  /*
-    Konfigurasi desktop tetap memakai
-    nilai dari kode sebelumnya.
-
-    Pada HP, kamera sedikit dijauhkan
-    agar objek tidak terpotong.
-  */
-
   const cameraConfiguration =
     isMobile
       ? {
           position: [
-            4.8,
-            3.6,
-            6.1,
+            5.3,
+            3.9,
+            6.8,
           ],
-          fov: 46,
+
+          fov: 47,
         }
+
       : {
           position: [
-            4.3,
-            3.2,
-            5.3,
+            4.8,
+            3.5,
+            6.2,
           ],
-          fov: 42,
+
+          fov: 43,
         };
 
 
-  /*
-    DPR desktop tetap maksimal 2.
-
-    DPR HP dibatasi agar animasi 3D
-    tidak terlalu berat dan tetap halus.
-  */
-
   const pixelRatio =
     isMobile
-      ? [1, 1.4]
-      : [1, 2];
+      ? [
+          1,
+          1.4,
+        ]
+
+      : [
+          1,
+          2,
+        ];
 
 
   return (
@@ -346,6 +165,7 @@ function ShapeViewer({
           intensity={1.35}
         />
 
+
         <directionalLight
           position={[
             5,
@@ -355,6 +175,7 @@ function ShapeViewer({
           intensity={2.2}
           color="#ffffff"
         />
+
 
         <directionalLight
           position={[
@@ -366,6 +187,7 @@ function ShapeViewer({
           color="#8197ff"
         />
 
+
         <pointLight
           position={[
             0,
@@ -376,37 +198,71 @@ function ShapeViewer({
           color="#a9d8f3"
         />
 
-        <ShapeModel
+
+        <FoldingShape
           key={
             selectedShape
           }
           type={
             selectedShape
           }
+          open={
+            isNetOpen
+          }
         />
 
+
         <OrbitControls
-          enablePan={false}
+          /*
+            Bangun ruang tertutup:
+            bisa diputar seperti biasa.
+
+            Jaring-jaring:
+            rotation dimatikan sementara
+            supaya selalu tampak seperti
+            gambar jaring-jaring normal.
+          */
+
+          enableRotate={
+            !isNetOpen
+          }
+
+          enablePan
           enableZoom
+
           minDistance={
             isMobile
-              ? 3.8
-              : 3.3
+              ? 4
+              : 3.4
           }
-          maxDistance={8}
-          autoRotate
-          autoRotateSpeed={1.25}
+
+          maxDistance={10}
+
+          autoRotate={
+            !isNetOpen
+          }
+
+          autoRotateSpeed={1.1}
+
           dampingFactor={0.08}
           enableDamping
+
           rotateSpeed={
             isMobile
               ? 0.75
               : 1
           }
+
           zoomSpeed={
             isMobile
               ? 0.75
               : 1
+          }
+
+          panSpeed={
+            isMobile
+              ? 0.65
+              : 0.9
           }
         />
       </Suspense>

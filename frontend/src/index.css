@@ -328,11 +328,6 @@ img {
   text-align: justify;
 }
 
-.vertex-hero-right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
 
 .vertex-hero-image {
   display: block;
@@ -5449,12 +5444,12 @@ body::after {
 
   box-shadow: none;
 
-  animation:
-    vertexRocketBannerFloating
-    2.8s
-    ease-in-out
-    2.2s
-    infinite;
+  /*
+    Setelah animasi masuk selesai, banner dibuat statis.
+    Ini mengurangi animasi compositor yang berjalan bersamaan
+    dengan Canvas 3D pada hero tanpa mengubah layout/warna.
+  */
+  animation: none;
 }
 
 
@@ -5486,18 +5481,11 @@ body::after {
 
   transform-origin: center;
 
-  filter:
-    drop-shadow(
-      0 7px 7px
-      rgba(7, 59, 145, 0.24)
-    );
+  /* text-shadow lebih ringan dibanding filter: drop-shadow pada emoji. */
+  text-shadow: 0 7px 7px rgba(7, 59, 145, 0.24);
 
-  animation:
-    vertexHeroRocketVibrate
-    180ms
-    ease-in-out
-    infinite
-    alternate;
+  /* Hindari getaran 180ms tanpa henti saat WebGL sedang beranimasi. */
+  animation: none;
 }
 
 
@@ -5535,14 +5523,8 @@ body::after {
 
   transform-origin: center;
 
-  filter: blur(1px);
-
-  animation:
-    vertexHeroRocketTrail
-    160ms
-    ease-in-out
-    infinite
-    alternate;
+  /* Trail tetap terlihat, tetapi tanpa blur/animasi terus-menerus. */
+  animation: none;
 }
 
 
@@ -5914,3 +5896,1541 @@ body::after {
     transform: none;
   }
 }
+
+/* =========================================================
+   ASSEMBLR AR EXPERIENCE
+========================================================= */
+
+.vertex-assemblr-card {
+  width: min(
+    calc(100% - 40px),
+    920px
+  );
+
+  margin:
+    72px
+    auto
+    86px;
+
+  padding:
+    34px
+    46px
+    36px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  background: #ffffff;
+
+  border-radius: 28px;
+
+  box-shadow:
+    8px 8px 0
+      rgba(
+        36,
+        55,
+        75,
+        0.2
+      ),
+    0 18px 35px
+      rgba(
+        7,
+        59,
+        145,
+        0.05
+      );
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.vertex-assemblr-title {
+  width: 100%;
+
+  margin-bottom: 24px;
+
+  text-align: center;
+}
+
+
+.vertex-assemblr-title h2 {
+  margin: 0;
+
+  color: #0b4496;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: clamp(
+    27px,
+    3vw,
+    38px
+  );
+
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   EMBED AREA
+
+   INI BAGIAN TENGAH YANG AKAN
+   MENAMPILKAN ASSEMBLR EDU
+========================================================= */
+
+.vertex-assemblr-screen {
+  position: relative;
+
+  width: 100%;
+
+  height: 430px;
+
+  margin:
+    0
+    auto
+    28px;
+
+  background: #dff5ff;
+
+  border-radius: 22px;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    inset
+    0 0 0 2px
+    rgba(
+      7,
+      59,
+      145,
+      0.08
+    );
+}
+
+
+/* =========================================================
+   IFRAME ASSEMBLR
+========================================================= */
+
+.vertex-assemblr-iframe {
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  background: #dff5ff;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+
+   INI HANYA MUNCUL KALAU LINK
+   ASSEMBLR MASIH KOSONG.
+========================================================= */
+
+.vertex-assemblr-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+
+  color: #0b4496;
+
+  text-align: center;
+}
+
+
+.vertex-assemblr-placeholder span {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 100px;
+
+  min-height: 48px;
+
+  padding:
+    8px
+    20px;
+
+  background: #ffffff;
+
+  border-radius: 999px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 7px 18px
+    rgba(
+      7,
+      59,
+      145,
+      0.1
+    );
+}
+
+
+.vertex-assemblr-placeholder p {
+  margin: 0;
+
+  color: #3970b4;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.vertex-assemblr-description {
+  width: 100%;
+
+  max-width: 720px;
+
+  text-align: center;
+}
+
+
+.vertex-assemblr-description h3 {
+  margin:
+    0
+    0
+    20px;
+
+  color: #0b4496;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+  line-height: 1.35;
+}
+
+
+.vertex-assemblr-description p {
+  width: 100%;
+
+  max-width: 700px;
+
+  margin:
+    0
+    auto
+    24px;
+
+  color: #114e9e;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   TARGET AR
+========================================================= */
+
+.vertex-assemblr-target {
+  min-width: 220px;
+
+  min-height: 48px;
+
+  padding:
+    10px
+    24px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  color: #174b96;
+
+  background: #d9f3ff;
+
+  border-radius: 999px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+
+.vertex-assemblr-target strong {
+  margin-left: 4px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  .vertex-assemblr-card {
+    width:
+      calc(100% - 28px);
+
+    margin:
+      55px
+      auto
+      65px;
+
+    padding:
+      28px
+      26px
+      30px;
+
+    border-radius: 24px;
+  }
+
+
+  .vertex-assemblr-title {
+    margin-bottom: 20px;
+  }
+
+
+  .vertex-assemblr-title h2 {
+    font-size: 29px;
+  }
+
+
+  .vertex-assemblr-screen {
+    height: 390px;
+
+    margin-bottom: 24px;
+
+    border-radius: 19px;
+  }
+
+
+  .vertex-assemblr-description h3 {
+    margin-bottom: 16px;
+
+    font-size: 18px;
+  }
+
+
+  .vertex-assemblr-description p {
+    max-width: 570px;
+
+    margin-bottom: 20px;
+
+    font-size: 14px;
+  }
+
+
+  .vertex-assemblr-target {
+    min-width: 190px;
+
+    min-height: 43px;
+
+    font-size: 13px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width: 480px
+) {
+  .vertex-assemblr-card {
+    width:
+      calc(100% - 20px);
+
+    margin:
+      38px
+      auto
+      48px;
+
+    padding:
+      22px
+      14px
+      24px;
+
+    border-radius: 20px;
+
+    box-shadow:
+      5px 6px 0
+      rgba(
+        36,
+        55,
+        75,
+        0.17
+      );
+  }
+
+
+  .vertex-assemblr-title {
+    margin-bottom: 16px;
+  }
+
+
+  .vertex-assemblr-title h2 {
+    font-size: 24px;
+  }
+
+
+  .vertex-assemblr-screen {
+    height: 320px;
+
+    margin-bottom: 20px;
+
+    border-radius: 16px;
+  }
+
+
+  .vertex-assemblr-description h3 {
+    margin-bottom: 12px;
+
+    font-size: 16px;
+
+    line-height: 1.35;
+  }
+
+
+  .vertex-assemblr-description p {
+    max-width: 320px;
+
+    margin-bottom: 18px;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+  }
+
+
+  .vertex-assemblr-target {
+    min-width: 165px;
+
+    min-height: 38px;
+
+    padding:
+      8px
+      18px;
+
+    font-size: 11px;
+  }
+
+
+  .vertex-assemblr-placeholder span {
+    min-width: 80px;
+
+    min-height: 40px;
+
+    font-size: 13px;
+  }
+
+
+  .vertex-assemblr-placeholder p {
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   PENYERAGAMAN UKURAN CARD HALAMAN AR
+
+   Bangun Ruang 3D
+   QR Code
+   AR Experience
+
+   Semua dibuat memiliki lebar yang sama.
+   Bagian lain tidak diubah.
+========================================================= */
+
+
+/* =========================================================
+   UKURAN UTAMA DESKTOP
+========================================================= */
+
+.vertex-ar-viewer-card,
+.vertex-ar-qr-card,
+.vertex-assemblr-card {
+  width: min(
+    calc(100% - 40px),
+    920px
+  );
+
+  box-sizing: border-box;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* =========================================================
+   BANGUN RUANG 3D
+
+   Hanya lebarnya yang disamakan.
+   Tinggi viewer dan desain lama tetap.
+========================================================= */
+
+.vertex-ar-viewer-card {
+  overflow: hidden;
+}
+
+
+/* Supaya header tetap memenuhi seluruh card */
+
+.vertex-ar-viewer-header {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* Viewer tetap memenuhi card baru */
+
+.vertex-ar-viewer-body {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* Navigation tetap memenuhi seluruh card */
+
+.vertex-ar-shape-navigation {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   QR CODE CARD
+
+   Lebarnya dibuat sama seperti AR Experience.
+   Isi tetap berada di tengah.
+========================================================= */
+
+.vertex-ar-qr-card {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+}
+
+
+/* Judul QR tetap seperti desain sebelumnya */
+
+.vertex-ar-qr-card h2 {
+  width: 100%;
+
+  text-align: center;
+}
+
+
+/* Deskripsi QR tetap berada di tengah */
+
+.vertex-ar-qr-card > p {
+  width: min(
+    100%,
+    650px
+  );
+
+  margin-left: auto;
+  margin-right: auto;
+
+  text-align: center;
+}
+
+
+/* QR tetap tidak ikut membesar walaupun card melebar */
+
+.vertex-ar-qr-placeholder {
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   AR EXPERIENCE
+
+   Ukuran tetap menjadi patokan utama.
+========================================================= */
+
+.vertex-assemblr-card {
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   TITLE AR EXPERIENCE
+========================================================= */
+
+.vertex-assemblr-title {
+  width: 100%;
+
+  text-align: center;
+}
+
+
+.vertex-assemblr-title h2 {
+  margin: 0;
+
+  color: #0a459b;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   EMBED ASSEMBLR
+
+   Tetap memenuhi card tanpa keluar dari batas.
+========================================================= */
+
+.vertex-assemblr-screen {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+.vertex-assemblr-iframe {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+/* =========================================================
+   DESKRIPSI AR EXPERIENCE
+========================================================= */
+
+.vertex-assemblr-description {
+  width: 100%;
+
+  text-align: center;
+}
+
+
+.vertex-assemblr-description h3 {
+  color: #0a459b;
+}
+
+
+.vertex-assemblr-description p {
+  color: #0a459b;
+}
+
+
+/* =========================================================
+   TARGET AR
+
+   Dibuat aman supaya tulisan tidak:
+   - kepotong
+   - turun aneh
+   - keluar dari pill
+   - merusak layout
+========================================================= */
+
+.vertex-assemblr-target {
+  width: fit-content;
+
+  min-width: 190px;
+  max-width: calc(100% - 24px);
+
+  min-height: 42px;
+
+  padding:
+    8px
+    22px;
+
+  margin:
+    0
+    auto;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  box-sizing: border-box;
+
+  color: #0a459b;
+
+  background: #d9f3ff;
+
+  border-radius: 999px;
+
+  font-family:
+    "Poppins",
+    sans-serif;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  line-height: 1.2;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+}
+
+
+/* Nama bangun dibuat biru tua */
+
+.vertex-assemblr-target strong {
+  color: #0a459b;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TARGET QR CODE
+
+   Dibuat konsisten supaya tidak ikut rusak
+   setelah card QR diperbesar.
+========================================================= */
+
+.vertex-ar-target {
+  width: fit-content;
+
+  min-width: 150px;
+  max-width: calc(100% - 24px);
+
+  margin-left: auto;
+  margin-right: auto;
+
+  box-sizing: border-box;
+
+  white-space: nowrap;
+
+  color: #0a459b;
+}
+
+
+.vertex-ar-target strong {
+  color: #0a459b;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  .vertex-ar-viewer-card,
+  .vertex-ar-qr-card,
+  .vertex-assemblr-card {
+    width:
+      calc(100% - 28px);
+  }
+
+
+  .vertex-assemblr-target {
+    min-width: 175px;
+
+    min-height: 40px;
+
+    padding:
+      8px
+      18px;
+
+    font-size: 12px;
+  }
+
+
+  .vertex-ar-target {
+    min-width: 140px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width: 480px
+) {
+  .vertex-ar-viewer-card,
+  .vertex-ar-qr-card,
+  .vertex-assemblr-card {
+    width:
+      calc(100% - 20px);
+  }
+
+
+  .vertex-assemblr-target {
+    min-width: 155px;
+
+    max-width:
+      calc(100% - 16px);
+
+    min-height: 36px;
+
+    padding:
+      7px
+      15px;
+
+    font-size: 10px;
+  }
+
+
+  .vertex-ar-target {
+    min-width: 130px;
+
+    max-width:
+      calc(100% - 16px);
+
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   AYO JELAJAHI — FINAL POSITION
+   Menyeimbangkan teks kiri + karakter kanan
+   dengan card AR Experience di atas
+========================================================= */
+
+.vertex-ar-explore {
+  width: min(
+    calc(100% - 40px),
+    920px
+  );
+
+  min-height: 470px;
+
+  margin:
+    40px
+    auto
+    70px;
+
+  padding:
+    20px
+    0;
+
+  box-sizing: border-box;
+
+  display: grid;
+
+  /*
+    Kiri untuk tulisan.
+    Kanan sedikit lebih besar agar
+    karakter bisa berada lebih ke kanan.
+  */
+  grid-template-columns:
+    minmax(0, 0.92fr)
+    minmax(0, 1.08fr);
+
+  align-items: center;
+
+  column-gap: 70px;
+
+  /*
+    PENTING:
+    jangan geser seluruh section lagi.
+  */
+  transform: none !important;
+}
+
+
+/* =========================================================
+   TEKS
+========================================================= */
+
+.vertex-ar-explore-content {
+  width: 100%;
+  max-width: 500px;
+
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+  justify-self: end;
+  align-self: center;
+
+  /*
+    Geser tulisan sedikit ke kanan,
+    tetapi tetap di area kiri.
+  */
+  transform:
+    translateX(28px) !important;
+}
+
+
+.vertex-ar-explore-content h2 {
+  margin:
+    0
+    0
+    18px;
+
+  padding: 0;
+
+  text-align: left;
+}
+
+
+.vertex-ar-explore-content p {
+  width: 100%;
+  max-width: 500px;
+
+  margin: 0;
+
+  padding: 0;
+
+  text-align: left;
+}
+
+
+/* =========================================================
+   AREA KARAKTER
+
+   Karakter dibuat benar-benar berada
+   di sisi kanan card AR Experience.
+========================================================= */
+
+.vertex-ar-character-wrapper {
+  position: relative;
+
+  width: 100%;
+  height: 430px;
+
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  justify-self: stretch;
+  align-self: center;
+
+  box-sizing: border-box;
+
+  /*
+    INI YANG MENGGESER ORANG KE KANAN.
+  */
+  transform:
+    translateX(78px) !important;
+}
+
+
+/* =========================================================
+   VIDEO STAGE KARAKTER
+
+   Tetap mempertahankan ukuran animasi asli.
+========================================================= */
+
+.vertex-ar-character-wrapper
+.vertex-ar-video-stage {
+  position: relative;
+
+  margin:
+    0
+    auto;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  transform: none !important;
+}
+
+
+/* Jangan biarkan canvas punya margin
+   bawaan yang menariknya kembali ke kiri */
+
+.vertex-ar-character-wrapper
+.vertex-ar-video-canvas,
+.vertex-ar-character-wrapper
+.vertex-ar-video-loading,
+.vertex-ar-character-wrapper
+.vertex-ar-video-fallback {
+  margin:
+    0
+    auto;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   DESKTOP BESAR
+
+   Sedikit lebih ke kanan supaya visual
+   benar-benar seimbang.
+========================================================= */
+
+@media (
+  min-width: 1200px
+) {
+  .vertex-ar-explore {
+    column-gap: 80px;
+  }
+
+
+  .vertex-ar-explore-content {
+    transform:
+      translateX(35px) !important;
+  }
+
+
+  .vertex-ar-character-wrapper {
+    transform:
+      translateX(95px) !important;
+  }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  .vertex-ar-explore {
+    width:
+      calc(100% - 28px);
+
+    min-height: 390px;
+
+    margin:
+      35px
+      auto
+      55px;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(200px, 0.85fr);
+
+    column-gap: 28px;
+  }
+
+
+  .vertex-ar-explore-content {
+    max-width: 430px;
+
+    transform:
+      translateX(10px) !important;
+  }
+
+
+  .vertex-ar-character-wrapper {
+    height: 370px;
+
+    transform:
+      translateX(25px) !important;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+
+   Di HP kembali vertikal agar tidak
+   keluar dari layar.
+========================================================= */
+
+@media (
+  max-width: 480px
+) {
+  .vertex-ar-explore {
+    width:
+      calc(100% - 20px);
+
+    min-height: auto;
+
+    margin:
+      28px
+      auto
+      45px;
+
+    padding:
+      20px
+      0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 20px;
+
+    transform:
+      none !important;
+  }
+
+
+  .vertex-ar-explore-content {
+    width: 100%;
+    max-width: 360px;
+
+    margin:
+      0
+      auto;
+
+    transform:
+      none !important;
+
+    text-align: center;
+  }
+
+
+  .vertex-ar-explore-content h2,
+  .vertex-ar-explore-content p {
+    margin-left: auto;
+    margin-right: auto;
+
+    text-align: center;
+  }
+
+
+  .vertex-ar-character-wrapper {
+    width: 100%;
+    height: 330px;
+
+    justify-content: center;
+
+    transform:
+      none !important;
+  }
+}
+
+/* =========================================================
+   HERO PHONE — FINAL ADJUSTMENT
+========================================================= */
+
+
+/* =========================================================
+   AREA KANAN
+========================================================= */
+
+.vertex-hero-right {
+  position: relative;
+
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: visible;
+}
+
+
+/* =========================================================
+   UKURAN PHONE
+
+   Sedikit lebih kecil daripada versi sebelumnya.
+========================================================= */
+
+.vertex-hero-phone-wrapper {
+  position: relative;
+
+  /* Batasi pekerjaan layout/style ke area hero 3D. */
+  isolation: isolate;
+  contain: layout style;
+
+  width: min(
+    100%,
+    520px
+  );
+
+  height: 540px;
+
+  margin:
+    0
+    auto;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: visible;
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+.vertex-hero-phone-scene {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  /* Canvas punya area render sendiri agar perubahan frame tidak memicu layout luar. */
+  contain: layout paint style;
+
+  cursor: grab;
+
+  touch-action: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+}
+
+
+.vertex-hero-phone-scene:active {
+  cursor: grabbing;
+}
+
+
+.vertex-hero-phone-scene canvas {
+  display: block;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  outline: none;
+
+  /* Membantu menjaga Canvas sebagai layer komposit stabil. */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+
+/* =========================================================
+   GLOW
+
+   Disesuaikan dengan ukuran HP yang baru.
+========================================================= */
+
+.vertex-hero-phone-wrapper::before {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+
+  top: 50%;
+  left: 50%;
+
+  width: 330px;
+  height: 330px;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  background:
+    radial-gradient(
+      circle,
+
+      rgba(
+        100,
+        170,
+        255,
+        0.18
+      )
+      0%,
+
+      rgba(
+        122,
+        147,
+        255,
+        0.08
+      )
+      48%,
+
+      transparent
+      73%
+    );
+
+  border-radius:
+    50%;
+
+  /* radial-gradient sudah memberi tepi lembut tanpa filter blur. */
+  pointer-events:
+    none;
+}
+
+
+/* =========================================================
+   SHADOW DI BAWAH HP
+========================================================= */
+
+.vertex-hero-phone-wrapper::after {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+
+  left: 50%;
+  bottom: 55px;
+
+  width: 170px;
+  height: 24px;
+
+  transform:
+    translateX(-50%);
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(17, 72, 151, 0.16) 0%,
+      rgba(17, 72, 151, 0.08) 46%,
+      rgba(17, 72, 151, 0) 76%
+    );
+
+  border-radius:
+    50%;
+
+  pointer-events:
+    none;
+}
+
+
+/* =========================================================
+   HAPUS PUTAR HP
+
+   Walaupun class lama masih tersisa,
+   jangan tampilkan.
+========================================================= */
+
+.vertex-hero-phone-hint {
+  display:
+    none !important;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+  max-width: 1024px
+) {
+  .vertex-hero-phone-wrapper {
+    width: min(
+      100%,
+      460px
+    );
+
+    height:
+      490px;
+  }
+
+
+  .vertex-hero-phone-wrapper::before {
+    width:
+      295px;
+
+    height:
+      295px;
+  }
+
+
+  .vertex-hero-phone-wrapper::after {
+    bottom:
+      50px;
+
+    width:
+      155px;
+  }
+}
+
+
+/* =========================================================
+   TABLET KECIL
+========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  .vertex-hero-phone-wrapper {
+    width: min(
+      100%,
+      410px
+    );
+
+    height:
+      440px;
+  }
+
+
+  .vertex-hero-phone-wrapper::before {
+    width:
+      265px;
+
+    height:
+      265px;
+  }
+
+
+  .vertex-hero-phone-wrapper::after {
+    bottom:
+      44px;
+
+    width:
+      145px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width: 480px
+) {
+  .vertex-hero-phone-wrapper {
+    width:
+      100%;
+
+    max-width:
+      330px;
+
+    height:
+      360px;
+
+    margin:
+      8px
+      auto
+      0;
+  }
+
+
+  .vertex-hero-phone-wrapper::before {
+    width:
+      220px;
+
+    height:
+      220px;
+  }
+
+
+  .vertex-hero-phone-wrapper::after {
+    bottom:
+      36px;
+
+    width:
+      125px;
+
+    height:
+      18px;
+  }
+}
+
+/* =========================================================
+   PERFORMANCE — OFFSCREEN SECTIONS
+   Tidak mengubah ukuran/warna/layout. Browser boleh melewati
+   render section yang masih jauh di bawah viewport saat hero
+   dan HP 3D sedang menjalankan animasi pembuka.
+========================================================= */
+
+@supports (content-visibility: auto) {
+  .vertex-feature-ar,
+  .vertex-feature-materi,
+  .vertex-learning-goal,
+  .vertex-guide,
+  .vertex-footer,
+  .vertex-ar-qr-card,
+  .vertex-assemblr-card,
+  .vertex-ar-explore {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 560px;
+  }
+}
+
+
