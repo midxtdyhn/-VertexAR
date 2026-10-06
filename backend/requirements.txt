@@ -4,4 +4,4 @@ pydantic-settings
 python-multipart
 sqlalchemy
 google-genai
-psycopg2-binary
+psycopg[binary]
