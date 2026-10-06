@@ -90,6 +90,14 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "message": "VertexAR FastAPI is running"
+    }
+
 raw_frontend_origins = os.getenv(
     "FRONTEND_ORIGINS",
     "http://localhost:5173,http://127.0.0.1:5173",
@@ -110,10 +118,6 @@ app.add_middleware(
 )
 
 
-# =========================================================
-# CORS
-# =========================================================
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -127,10 +131,6 @@ app.add_middleware(
 )
 
 
-# =========================================================
-# FILE UPLOAD
-# =========================================================
-
 app.mount(
     "/uploads",
     StaticFiles(
@@ -141,10 +141,6 @@ app.mount(
     name="uploads",
 )
 
-
-# =========================================================
-# ROUTER
-# =========================================================
 
 app.include_router(
     quizzes_router
@@ -167,9 +163,6 @@ app.include_router(
 )
 
 
-# =========================================================
-# ENDPOINT DASAR
-# =========================================================
 
 @app.get("/")
 def root():

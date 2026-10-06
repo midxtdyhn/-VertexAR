@@ -6,30 +6,36 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from app.core.config import settings
 
 
-engine = create_engine(
-    settings.database_url,
-    connect_args={
+database_url = settings.database_url
+is_sqlite = database_url.startswith("sqlite")
+
+engine_kwargs = {
+    "pool_pre_ping": True,
+    "echo": False,
+}
+
+if is_sqlite:
+    engine_kwargs["connect_args"] = {
         "check_same_thread": False,
-    },
-    pool_pre_ping=True,
-    echo=False,
+    }
+
+engine = create_engine(
+    database_url,
+    **engine_kwargs,
 )
 
 
-@event.listens_for(engine, "connect")
-def enable_sqlite_foreign_keys(
-    dbapi_connection,
-    connection_record,
-) -> None:
-    """
-    Mengaktifkan foreign key pada setiap koneksi SQLite.
-    """
+if is_sqlite:
+    @event.listens_for(engine, "connect")
+    def enable_sqlite_foreign_keys(
+        dbapi_connection,
+        connection_record,
+    ) -> None:
+        del connection_record
 
-    del connection_record
-
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
 
 SessionLocal = sessionmaker(
@@ -45,10 +51,6 @@ class Base(DeclarativeBase):
 
 
 def get_db() -> Generator[Session, None, None]:
-    """
-    Membuka session database untuk satu request.
-    """
-
     database = SessionLocal()
 
     try:
