@@ -3,7 +3,6 @@ import json
 import math
 import os
 import re
-import sqlite3
 
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,7 +12,20 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from app.core.config import settings
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    Text,
+    delete,
+    func,
+    select,
+)
+
+from app.database import engine
 
 
 # =========================================================
@@ -28,80 +40,8 @@ KNOWLEDGE_DIR = (
     BACKEND_DIR / "knowledge"
 )
 
-
 load_dotenv(
     BACKEND_DIR / ".env"
-)
-
-
-# =========================================================
-# DATABASE PATH
-# =========================================================
-
-def get_database_path() -> Path:
-    """
-    Mengambil path SQLite dari DATABASE_URL.
-
-    Lokal:
-    sqlite:///./vertexar.db
-    -> backend/vertexar.db
-
-    Railway:
-    sqlite:////data/vertexar-local.db
-    -> /data/vertexar-local.db
-    """
-
-    database_url = (
-        settings.database_url
-        .strip()
-    )
-
-    sqlite_prefixes = (
-        "sqlite+pysqlite:///",
-        "sqlite:///",
-    )
-
-    raw_path = None
-
-    for prefix in sqlite_prefixes:
-        if database_url.startswith(prefix):
-            raw_path = database_url[
-                len(prefix):
-            ]
-            break
-
-    if raw_path is None:
-        raise RuntimeError(
-            "Knowledge service saat ini "
-            "hanya mendukung database SQLite."
-        )
-
-    if raw_path == ":memory:":
-        raise RuntimeError(
-            "Database SQLite in-memory "
-            "tidak didukung untuk knowledge."
-        )
-
-    database_path = Path(
-        raw_path
-    )
-
-    if not database_path.is_absolute():
-        database_path = (
-            BACKEND_DIR
-            / database_path
-        )
-
-    database_path.parent.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    return database_path.resolve()
-
-
-DATABASE_PATH = (
-    get_database_path()
 )
 
 
@@ -112,9 +52,103 @@ DATABASE_PATH = (
 EMBEDDING_MODEL = os.getenv(
     "GEMINI_EMBEDDING_MODEL",
     "gemini-embedding-2",
-)
+).strip()
 
 EMBEDDING_DIMENSION = 768
+
+
+# =========================================================
+# KNOWLEDGE DATABASE TABLE
+#
+# Menggunakan SQLAlchemy supaya:
+# - SQLite lokal tetap bisa
+# - PostgreSQL / Neon di Vercel bisa
+# - Tidak crash saat module di-import
+# =========================================================
+
+knowledge_metadata = MetaData()
+
+knowledge_chunks = Table(
+    "knowledge_chunks",
+    knowledge_metadata,
+
+    Column(
+        "id",
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    ),
+
+    Column(
+        "document_name",
+        String(255),
+        nullable=False,
+        index=True,
+    ),
+
+    Column(
+        "document_title",
+        String(500),
+        nullable=False,
+    ),
+
+    Column(
+        "route",
+        String(500),
+        nullable=False,
+        default="",
+    ),
+
+    Column(
+        "category",
+        String(100),
+        nullable=False,
+        default="materi",
+    ),
+
+    Column(
+        "section_title",
+        String(500),
+        nullable=False,
+    ),
+
+    Column(
+        "content",
+        Text,
+        nullable=False,
+    ),
+
+    Column(
+        "content_hash",
+        String(64),
+        nullable=False,
+    ),
+
+    Column(
+        "embedding",
+        Text,
+        nullable=False,
+    ),
+
+    Column(
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+    ),
+)
+
+
+# =========================================================
+# DATABASE LABEL
+# =========================================================
+
+def database_label() -> str:
+    """
+    Hanya menampilkan jenis database.
+    Tidak membocorkan password DATABASE_URL.
+    """
+
+    return engine.dialect.name
 
 
 # =========================================================
@@ -123,8 +157,9 @@ EMBEDDING_DIMENSION = 768
 
 def get_api_key() -> str:
     api_key = os.getenv(
-        "GEMINI_API_KEY"
-    )
+        "GEMINI_API_KEY",
+        "",
+    ).strip()
 
     if not api_key:
         raise RuntimeError(
@@ -132,24 +167,7 @@ def get_api_key() -> str:
             "di environment backend."
         )
 
-    return api_key.strip()
-
-
-# =========================================================
-# DATABASE CONNECTION
-# =========================================================
-
-def get_database_connection() -> sqlite3.Connection:
-    connection = sqlite3.connect(
-        DATABASE_PATH,
-        timeout=30,
-    )
-
-    connection.row_factory = (
-        sqlite3.Row
-    )
-
-    return connection
+    return api_key
 
 
 # =========================================================
@@ -157,33 +175,17 @@ def get_database_connection() -> sqlite3.Connection:
 # =========================================================
 
 def create_knowledge_table() -> None:
-    with get_database_connection() as connection:
-        connection.execute(
-            """
-            CREATE TABLE IF NOT EXISTS knowledge_chunks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                document_name TEXT NOT NULL,
-                document_title TEXT NOT NULL,
-                route TEXT NOT NULL,
-                category TEXT NOT NULL,
-                section_title TEXT NOT NULL,
-                content TEXT NOT NULL,
-                content_hash TEXT NOT NULL,
-                embedding TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            )
-            """
-        )
+    """
+    Membuat tabel knowledge_chunks jika belum ada.
 
-        connection.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_knowledge_chunks_document_name
-            ON knowledge_chunks(document_name)
-            """
-        )
+    SQLAlchemy akan menyesuaikan SQL untuk:
+    - SQLite
+    - PostgreSQL
+    """
 
-        connection.commit()
+    knowledge_metadata.create_all(
+        bind=engine
+    )
 
 
 # =========================================================
@@ -192,7 +194,10 @@ def create_knowledge_table() -> None:
 
 def parse_frontmatter(
     markdown_text: str,
-) -> tuple[dict[str, str], str]:
+) -> tuple[
+    dict[str, str],
+    str,
+]:
     metadata: dict[
         str,
         str,
@@ -319,6 +324,35 @@ def split_long_section(
             current_length = 0
             part_number += 1
 
+        if (
+            not current
+            and len(paragraph) > max_chars
+        ):
+            start = 0
+
+            while start < len(paragraph):
+                piece = paragraph[
+                    start:
+                    start + max_chars
+                ].strip()
+
+                if piece:
+                    result.append(
+                        (
+                            (
+                                f"{title} — "
+                                f"Bagian {part_number}"
+                            ),
+                            piece,
+                        )
+                    )
+
+                    part_number += 1
+
+                start += max_chars
+
+            continue
+
         current.append(
             paragraph
         )
@@ -360,18 +394,16 @@ def markdown_to_chunks(
         )
     )
 
-    document_title = (
-        metadata.get(
-            "title",
-            (
-                file_path.stem
-                .replace(
-                    "-",
-                    " ",
-                )
-                .title()
-            ),
-        )
+    document_title = metadata.get(
+        "title",
+        (
+            file_path.stem
+            .replace(
+                "-",
+                " ",
+            )
+            .title()
+        ),
     )
 
     route = metadata.get(
@@ -469,6 +501,7 @@ def markdown_to_chunks(
             final_title,
             final_content,
         ) in split_sections:
+
             chunks.append(
                 {
                     "document_name":
@@ -501,6 +534,7 @@ def markdown_to_chunks(
 def embed_text(
     text: str,
 ) -> list[float]:
+
     with genai.Client(
         api_key=get_api_key()
     ) as client:
@@ -510,7 +544,9 @@ def embed_text(
                 model=(
                     EMBEDDING_MODEL
                 ),
+
                 contents=text,
+
                 config=(
                     types.EmbedContentConfig(
                         output_dimensionality=(
@@ -527,14 +563,21 @@ def embed_text(
             "mengembalikan data."
         )
 
+    values = (
+        result
+        .embeddings[0]
+        .values
+    )
+
+    if not values:
+        raise RuntimeError(
+            "Embedding kosong."
+        )
+
     return [
         float(value)
         for value
-        in (
-            result
-            .embeddings[0]
-            .values
-        )
+        in values
     ]
 
 
@@ -740,149 +783,145 @@ def index_knowledge_directory() -> dict[
     document_count = 0
     chunk_count = 0
 
-    with (
-        get_database_connection()
-        as connection
-    ):
-
+    # Bersihkan index lama.
+    with engine.begin() as connection:
         connection.execute(
-            """
-            DELETE FROM
-            knowledge_chunks
-            """
+            delete(
+                knowledge_chunks
+            )
         )
 
-        connection.commit()
+    for file_path in (
+        markdown_files
+    ):
 
-        for file_path in (
-            markdown_files
+        if (
+            file_path.stat()
+            .st_size
+            == 0
         ):
-
-            if (
-                file_path.stat()
-                .st_size
-                == 0
-            ):
-                print(
-                    (
-                        "[LEWATI] "
-                        f"{file_path.name}: "
-                        "file kosong"
-                    )
-                )
-
-                continue
-
-            chunks = (
-                markdown_to_chunks(
-                    file_path
-                )
-            )
-
-            if not chunks:
-                print(
-                    (
-                        "[LEWATI] "
-                        f"{file_path.name}: "
-                        "tidak ada bagian"
-                    )
-                )
-
-                continue
-
             print(
                 (
-                    "[PROSES] "
+                    "[LEWATI] "
                     f"{file_path.name}: "
-                    f"{len(chunks)} bagian"
+                    "file kosong"
                 )
             )
 
-            for chunk in chunks:
+            continue
 
-                embedding = (
-                    create_document_embedding(
-                        chunk[
-                            "document_title"
-                        ],
-                        chunk[
-                            "section_title"
-                        ],
-                        chunk[
-                            "content"
-                        ],
-                    )
+        chunks = (
+            markdown_to_chunks(
+                file_path
+            )
+        )
+
+        if not chunks:
+            print(
+                (
+                    "[LEWATI] "
+                    f"{file_path.name}: "
+                    "tidak ada bagian"
                 )
+            )
 
-                content_hash = (
-                    hashlib.sha256(
-                        chunk[
-                            "content"
-                        ].encode(
-                            "utf-8"
-                        )
-                    ).hexdigest()
+            continue
+
+        print(
+            (
+                "[PROSES] "
+                f"{file_path.name}: "
+                f"{len(chunks)} bagian"
+            )
+        )
+
+        rows_to_insert: list[
+            dict[str, Any]
+        ] = []
+
+        for chunk in chunks:
+
+            embedding = (
+                create_document_embedding(
+                    chunk[
+                        "document_title"
+                    ],
+                    chunk[
+                        "section_title"
+                    ],
+                    chunk[
+                        "content"
+                    ],
                 )
+            )
 
-                connection.execute(
-                    """
-                    INSERT INTO knowledge_chunks (
-                        document_name,
-                        document_title,
-                        route,
-                        category,
-                        section_title,
-                        content,
-                        content_hash,
-                        embedding,
-                        created_at
+            content_hash = (
+                hashlib.sha256(
+                    chunk[
+                        "content"
+                    ].encode(
+                        "utf-8"
                     )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?
-                    )
-                    """,
-                    (
+                ).hexdigest()
+            )
+
+            rows_to_insert.append(
+                {
+                    "document_name":
                         chunk[
                             "document_name"
                         ],
+
+                    "document_title":
                         chunk[
                             "document_title"
                         ],
+
+                    "route":
                         chunk[
                             "route"
                         ],
+
+                    "category":
                         chunk[
                             "category"
                         ],
+
+                    "section_title":
                         chunk[
                             "section_title"
                         ],
+
+                    "content":
                         chunk[
                             "content"
                         ],
+
+                    "content_hash":
                         content_hash,
+
+                    "embedding":
                         json.dumps(
                             embedding
                         ),
-                        (
-                            datetime.now(
-                                timezone.utc
-                            ).isoformat()
+
+                    "created_at":
+                        datetime.now(
+                            timezone.utc
                         ),
-                    ),
+                }
+            )
+
+        if rows_to_insert:
+            with engine.begin() as connection:
+                connection.execute(
+                    knowledge_chunks.insert(),
+                    rows_to_insert,
                 )
 
-                chunk_count += 1
-
-            connection.commit()
+            chunk_count += (
+                len(rows_to_insert)
+            )
 
             document_count += 1
 
@@ -894,7 +933,7 @@ def index_knowledge_directory() -> dict[
             chunk_count,
 
         "database":
-            str(DATABASE_PATH),
+            database_label(),
 
         "embedding_model":
             EMBEDDING_MODEL,
@@ -915,44 +954,43 @@ def get_knowledge_stats() -> dict[
 
     create_knowledge_table()
 
-    with (
-        get_database_connection()
-        as connection
-    ):
+    with engine.connect() as connection:
 
         chunks = (
-            connection.execute(
-                """
-                SELECT
-                    COUNT(*) AS total
-                FROM knowledge_chunks
-                """
+            connection.scalar(
+                select(
+                    func.count()
+                ).select_from(
+                    knowledge_chunks
+                )
             )
-            .fetchone()["total"]
+            or 0
         )
 
         documents = (
-            connection.execute(
-                """
-                SELECT
-                    COUNT(
-                        DISTINCT document_name
-                    ) AS total
-                FROM knowledge_chunks
-                """
+            connection.scalar(
+                select(
+                    func.count(
+                        func.distinct(
+                            knowledge_chunks
+                            .c
+                            .document_name
+                        )
+                    )
+                )
             )
-            .fetchone()["total"]
+            or 0
         )
 
     return {
         "documents":
-            documents,
+            int(documents),
 
         "chunks":
-            chunks,
+            int(chunks),
 
         "database":
-            str(DATABASE_PATH),
+            database_label(),
 
         "embedding_model":
             EMBEDDING_MODEL,
@@ -980,27 +1018,23 @@ def search_knowledge(
 
     create_knowledge_table()
 
-    with (
-        get_database_connection()
-        as connection
-    ):
+    with engine.connect() as connection:
 
         rows = (
             connection.execute(
-                """
-                SELECT
-                    id,
-                    document_name,
-                    document_title,
-                    route,
-                    category,
-                    section_title,
-                    content,
-                    embedding
-                FROM knowledge_chunks
-                """
+                select(
+                    knowledge_chunks.c.id,
+                    knowledge_chunks.c.document_name,
+                    knowledge_chunks.c.document_title,
+                    knowledge_chunks.c.route,
+                    knowledge_chunks.c.category,
+                    knowledge_chunks.c.section_title,
+                    knowledge_chunks.c.content,
+                    knowledge_chunks.c.embedding,
+                )
             )
-            .fetchall()
+            .mappings()
+            .all()
         )
 
     if not rows:
@@ -1021,12 +1055,27 @@ def search_knowledge(
         try:
             document_embedding = (
                 json.loads(
-                    row["embedding"]
+                    row[
+                        "embedding"
+                    ]
                 )
             )
 
+            if not isinstance(
+                document_embedding,
+                list,
+            ):
+                continue
+
+            document_embedding = [
+                float(value)
+                for value
+                in document_embedding
+            ]
+
         except (
             TypeError,
+            ValueError,
             json.JSONDecodeError,
         ):
             continue
@@ -1063,7 +1112,9 @@ def search_knowledge(
         results.append(
             {
                 "id":
-                    row["id"],
+                    row[
+                        "id"
+                    ],
 
                 "document_name":
                     row[
@@ -1076,10 +1127,14 @@ def search_knowledge(
                     ],
 
                 "route":
-                    row["route"],
+                    row[
+                        "route"
+                    ],
 
                 "category":
-                    row["category"],
+                    row[
+                        "category"
+                    ],
 
                 "section_title":
                     row[
@@ -1087,7 +1142,9 @@ def search_knowledge(
                     ],
 
                 "content":
-                    row["content"],
+                    row[
+                        "content"
+                    ],
 
                 "score":
                     round(
@@ -1099,7 +1156,9 @@ def search_knowledge(
 
     results.sort(
         key=lambda item: (
-            item["score"]
+            item[
+                "score"
+            ]
         ),
         reverse=True,
     )
@@ -1136,20 +1195,27 @@ def format_knowledge_context(
                     (
                         f"[SUMBER {index}]"
                     ),
+
                     (
                         "Judul: "
                         f"{result['document_title']}"
                     ),
+
                     (
                         "Bagian: "
                         f"{result['section_title']}"
                     ),
+
                     (
                         "Halaman: "
                         f"{result['route'] or '-'}"
                     ),
+
                     "Isi:",
-                    result["content"],
+
+                    result[
+                        "content"
+                    ],
                 ]
             )
         )
