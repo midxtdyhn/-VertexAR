@@ -100,36 +100,29 @@ def health():
 
 raw_frontend_origins = os.getenv(
     "FRONTEND_ORIGINS",
-    "http://localhost:5173,http://127.0.0.1:5173",
+    "",
 )
 
 allowed_frontend_origins = [
-    origin.strip().rstrip("/")
-    for origin in raw_frontend_origins.split(",")
-    if origin.strip()
+    "https://vertex-ar.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
+
+for origin in raw_frontend_origins.split(","):
+    origin = origin.strip().rstrip("/")
+
+    if origin and origin not in allowed_frontend_origins:
+        allowed_frontend_origins.append(origin)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_frontend_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        settings.frontend_origin,
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 app.mount(
     "/uploads",

@@ -1,10 +1,12 @@
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL ||
-  "http://127.0.0.1:8000"
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? "https://vertexar-backend.vercel.app"
+    : "http://127.0.0.1:8000")
 )
   .trim()
   .replace(/\/+$/, "");
-
 
 async function readResponse(response) {
   let data = null;

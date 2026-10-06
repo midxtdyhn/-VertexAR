@@ -1,11 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
-/* =========================================================
-   VERTEXAR — CLEAN GLOBAL STYLES
-   Replace the entire src/index.css with this file.
-========================================================= */
-
 :root {
   --vertex-blue: #073b91;
   --vertex-blue-dark: #052f78;
@@ -56,10 +51,6 @@ select {
 img {
   max-width: 100%;
 }
-
-/* =========================================================
-   LOADING SCREEN
-========================================================= */
 
 .loading-container {
   position: relative;
@@ -162,10 +153,6 @@ img {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04); }
 }
-
-/* =========================================================
-   NAVBAR
-========================================================= */
 
 .vertex-navbar {
   position: relative;
