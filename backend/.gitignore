@@ -18,6 +18,7 @@ vertexar.db
 # Gambar yang diunggah
 uploads/*
 !uploads/.gitkeep
+!uploads/*.png
 
 # Python
 __pycache__/

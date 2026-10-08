@@ -21,10 +21,11 @@ def seed_database():
             db.query(Question).filter(Question.quiz_id == quiz.id).delete()
             db.commit()
 
-            # 3. Data Soal Latihan Bangun Ruang SMP
+            # 3. Data Soal Latihan Bangun Ruang SMP (Lengkap dengan Gambar)
             sample_questions = [
                 {
                     "prompt": "Sebuah kubus memiliki panjang rusuk 6 cm. Berapakah volume kubus tersebut?",
+                    "image_url": "/uploads/kubus.png",
                     "option_a": "36 cm³",
                     "option_b": "108 cm³",
                     "option_c": "216 cm³",
@@ -35,42 +36,46 @@ def seed_database():
                 },
                 {
                     "prompt": "Sebuah balok memiliki ukuran panjang 10 cm, lebar 5 cm, dan tinggi 4 cm. Luas permukaan balok tersebut adalah...",
+                    "image_url": "/uploads/balok.png",
                     "option_a": "110 cm²",
                     "option_b": "220 cm²",
                     "option_c": "200 cm²",
                     "option_d": "440 cm²",
                     "correct_option": "B",
-                    "explanation": "Luas Permukaan Balok = 2 × (pl + pt + lt) = 2 × (10×5 + 10×4 + 5×4) = 2 × (50 + 40 + 20) = 2 × 110 = 220 cm².",
+                    "explanation": "Luas Permukaan Balok = 2 × (pl + pt + lt) = 2 × (10×5 + 10×4 + 5×4) = 2 × (50 + 40 + 20) = 220 cm².",
                     "order": 2
                 },
                 {
                     "prompt": "Sebuah tabung memiliki jari-jari alas 7 cm dan tinggi 10 cm (menggunakan π = 22/7). Berapakah volume tabung tersebut?",
+                    "image_url": "/uploads/tabung.png",
                     "option_a": "1.540 cm³",
                     "option_b": "1.440 cm³",
                     "option_c": "770 cm³",
                     "option_d": "3.080 cm³",
                     "correct_option": "A",
-                    "explanation": "Volume Tabung = π × r² × t = (22/7) × 7 × 7 × 10 = 22 × 7 × 10 = 1.540 cm³.",
+                    "explanation": "Volume Tabung = π × r² × t = (22/7) × 7 × 7 × 10 = 1.540 cm³.",
                     "order": 3
                 },
                 {
                     "prompt": "Sebuah bola memiliki jari-jari 21 cm. Berapakah luas permukaan bola tersebut (menggunakan π = 22/7)?",
+                    "image_url": "/uploads/bola.png",
                     "option_a": "1.386 cm²",
                     "option_b": "2.772 cm²",
                     "option_c": "5.544 cm²",
                     "option_d": "38.808 cm²",
                     "correct_option": "C",
-                    "explanation": "Luas Permukaan Bola = 4 × π × r² = 4 × (22/7) × 21 × 21 = 4 × 22 × 3 × 21 = 5.544 cm².",
+                    "explanation": "Luas Permukaan Bola = 4 × π × r² = 4 × (22/7) × 21 × 21 = 5.544 cm².",
                     "order": 4
                 },
                 {
                     "prompt": "Suatu kerucut memiliki jari-jari alas 6 cm dan tinggi 8 cm. Berapakah panjang garis pelukis (s) kerucut tersebut?",
+                    "image_url": "/uploads/kerucut.png",
                     "option_a": "10 cm",
                     "option_b": "12 cm",
                     "option_c": "14 cm",
                     "option_d": "16 cm",
                     "correct_option": "A",
-                    "explanation": "Panjang garis pelukis (s) = √(r² + t²) = √(6² + 8²) = √(36 + 64) = √100 = 10 cm.",
+                    "explanation": "Panjang garis pelukis (s) = √(r² + t²) = √(6² + 8²) = √100 = 10 cm.",
                     "order": 5
                 }
             ]
@@ -79,6 +84,7 @@ def seed_database():
                 question = Question(
                     quiz_id=quiz.id,
                     prompt=q["prompt"],
+                    image_url=q["image_url"],
                     option_a=q["option_a"],
                     option_b=q["option_b"],
                     option_c=q["option_c"],
@@ -91,7 +97,7 @@ def seed_database():
                 db.add(question)
 
             db.commit()
-            print(f"Berhasil menambahkan {len(sample_questions)} soal ke database '{quiz.title}'!")
+            print(f"Berhasil menambahkan {len(sample_questions)} soal beserta gambarnya ke database!")
     except Exception as err:
         print(f"Informasi seed: {err}")
 

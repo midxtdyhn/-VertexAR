@@ -71,6 +71,7 @@ def ensure_default_quiz() -> None:
             sample_questions = [
                 {
                     "prompt": "Sebuah kubus memiliki panjang rusuk 6 cm. Berapakah volume kubus tersebut?",
+                    "image_url": "/uploads/kubus.png",
                     "option_a": "36 cm³",
                     "option_b": "108 cm³",
                     "option_c": "216 cm³",
@@ -81,6 +82,7 @@ def ensure_default_quiz() -> None:
                 },
                 {
                     "prompt": "Sebuah balok memiliki ukuran panjang 10 cm, lebar 5 cm, dan tinggi 4 cm. Luas permukaan balok tersebut adalah...",
+                    "image_url": "/uploads/balok.png",
                     "option_a": "110 cm²",
                     "option_b": "220 cm²",
                     "option_c": "200 cm²",
@@ -91,6 +93,7 @@ def ensure_default_quiz() -> None:
                 },
                 {
                     "prompt": "Sebuah tabung memiliki jari-jari alas 7 cm dan tinggi 10 cm (menggunakan π = 22/7). Berapakah volume tabung tersebut?",
+                    "image_url": "/uploads/tabung.png",
                     "option_a": "1.540 cm³",
                     "option_b": "1.440 cm³",
                     "option_c": "770 cm³",
@@ -101,6 +104,7 @@ def ensure_default_quiz() -> None:
                 },
                 {
                     "prompt": "Sebuah bola memiliki jari-jari 21 cm. Berapakah luas permukaan bola tersebut (menggunakan π = 22/7)?",
+                    "image_url": "/uploads/bola.png",
                     "option_a": "1.386 cm²",
                     "option_b": "2.772 cm²",
                     "option_c": "5.544 cm²",
@@ -111,6 +115,7 @@ def ensure_default_quiz() -> None:
                 },
                 {
                     "prompt": "Suatu kerucut memiliki jari-jari alas 6 cm dan tinggi 8 cm. Berapakah panjang garis pelukis (s) kerucut tersebut?",
+                    "image_url": "/uploads/kerucut.png",
                     "option_a": "10 cm",
                     "option_b": "12 cm",
                     "option_c": "14 cm",
@@ -126,6 +131,7 @@ def ensure_default_quiz() -> None:
                     models.Question(
                         quiz_id=quiz.id,
                         prompt=q["prompt"],
+                        image_url=q["image_url"],
                         option_a=q["option_a"],
                         option_b=q["option_b"],
                         option_c=q["option_c"],

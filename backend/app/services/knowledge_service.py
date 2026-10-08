@@ -51,7 +51,7 @@ load_dotenv(
 
 EMBEDDING_MODEL = os.getenv(
     "GEMINI_EMBEDDING_MODEL",
-    "gemini-embedding-2",
+    "text-embedding-004",
 ).strip()
 
 EMBEDDING_DIMENSION = 768
