@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vertexar_backend
+    restart: always
+    ports:
+      - "8001:8000"
+    environment:
+      - APP_NAME=VertexAR API
+      - APP_ENV=production
+      - FRONTEND_ORIGIN=https://vertex-ar.vercel.app
+      - DATABASE_URL=sqlite:///./data/vertexar.db
+      - UPLOAD_DIR=uploads
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/uploads:/app/uploads
+    networks:
+      - vertexar_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://api.vertexar.my.id}
+    container_name: vertexar_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - vertexar_net
+
+networks:
+  vertexar_net:
+    driver: bridge
