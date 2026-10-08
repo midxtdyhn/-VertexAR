@@ -205,6 +205,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.options("/{full_path:path}")
+async def global_options_handler(full_path: str):
+    return {}
+
 app.mount(
     "/uploads",
     StaticFiles(

@@ -25,7 +25,7 @@ def seed_database():
             sample_questions = [
                 {
                     "prompt": "Sebuah kubus memiliki panjang rusuk 6 cm. Berapakah volume kubus tersebut?",
-                    "image_url": "/uploads/kubus.png",
+                    "image_url": "/uploads/no1.jpeg",
                     "option_a": "36 cm³",
                     "option_b": "108 cm³",
                     "option_c": "216 cm³",
@@ -36,7 +36,7 @@ def seed_database():
                 },
                 {
                     "prompt": "Sebuah balok memiliki ukuran panjang 10 cm, lebar 5 cm, dan tinggi 4 cm. Luas permukaan balok tersebut adalah...",
-                    "image_url": "/uploads/balok.png",
+                    "image_url": "/uploads/no2.jpeg",
                     "option_a": "110 cm²",
                     "option_b": "220 cm²",
                     "option_c": "200 cm²",
@@ -47,7 +47,7 @@ def seed_database():
                 },
                 {
                     "prompt": "Sebuah tabung memiliki jari-jari alas 7 cm dan tinggi 10 cm (menggunakan π = 22/7). Berapakah volume tabung tersebut?",
-                    "image_url": "/uploads/tabung.png",
+                    "image_url": "/uploads/no3.jpeg",
                     "option_a": "1.540 cm³",
                     "option_b": "1.440 cm³",
                     "option_c": "770 cm³",
@@ -58,7 +58,7 @@ def seed_database():
                 },
                 {
                     "prompt": "Sebuah bola memiliki jari-jari 21 cm. Berapakah luas permukaan bola tersebut (menggunakan π = 22/7)?",
-                    "image_url": "/uploads/bola.png",
+                    "image_url": "/uploads/no4.jpeg",
                     "option_a": "1.386 cm²",
                     "option_b": "2.772 cm²",
                     "option_c": "5.544 cm²",
@@ -69,7 +69,7 @@ def seed_database():
                 },
                 {
                     "prompt": "Suatu kerucut memiliki jari-jari alas 6 cm dan tinggi 8 cm. Berapakah panjang garis pelukis (s) kerucut tersebut?",
-                    "image_url": "/uploads/kerucut.png",
+                    "image_url": "/uploads/no5.jpeg",
                     "option_a": "10 cm",
                     "option_b": "12 cm",
                     "option_c": "14 cm",

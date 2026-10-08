@@ -46,6 +46,11 @@ def ai_health_check():
 # CHAT DENGAN AI VERTEXAR
 # =========================================================
 
+@router.options("/chat")
+def options_ai_chat():
+    return {}
+
+
 @router.post(
     "/chat",
     response_model=AiChatResponse,
