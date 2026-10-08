@@ -104,6 +104,8 @@ raw_frontend_origins = os.getenv(
 )
 
 allowed_frontend_origins = [
+    "https://vertexar.my.id",
+    "https://www.vertexar.my.id",
     "https://vertex-ar.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -118,7 +120,7 @@ for origin in raw_frontend_origins.split(","):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_frontend_origins,
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origin_regex=r"https://.*\.my\.id|https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
