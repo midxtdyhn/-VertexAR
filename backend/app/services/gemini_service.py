@@ -1,5 +1,6 @@
 import os
 import re
+import requests
 
 from pathlib import Path
 from typing import Any
@@ -732,8 +733,45 @@ def generate_vertexar_answer(
 
 
     # =====================================================
-    # GEMINI REQUEST
+    # GROQ API / GEMINI REQUEST
     # =====================================================
+
+    groq_api_key = os.getenv("GROQ_API_KEY", "").strip()
+
+    if groq_api_key:
+        groq_model = os.getenv("GROQ_MODEL", "gpt-oss-120b").strip()
+        groq_messages = [{"role": "system", "content": SYSTEM_INSTRUCTION}]
+
+        for item in history[-10:]:
+            role = "user" if str(item.get("role", "")).strip() == "user" else "assistant"
+            text_val = str(item.get("content", "")).strip()
+            if text_val:
+                groq_messages.append({"role": role, "content": text_val})
+
+        groq_messages.append({"role": "user", "content": user_prompt})
+
+        try:
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {groq_api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": groq_model,
+                    "messages": groq_messages,
+                    "temperature": 0.35,
+                    "max_tokens": 1600,
+                },
+                timeout=25,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            answer = data["choices"][0]["message"]["content"].strip()
+            answer = clean_latex_to_plain_text(answer)
+            return attach_knowledge_sources(answer, knowledge_results)
+        except Exception as groq_err:
+            print(f"Groq API error, falling back to Gemini: {groq_err}")
 
     with genai.Client(
         api_key=get_api_key()

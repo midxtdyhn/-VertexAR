@@ -16,6 +16,8 @@ services:
       - DATABASE_URL=sqlite:///./vertexar.db
       - UPLOAD_DIR=uploads
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROQ_MODEL=${GROQ_MODEL:-gpt-oss-120b}
     volumes:
       - ./backend/vertexar.db:/app/vertexar.db
       - ./backend/uploads:/app/uploads
