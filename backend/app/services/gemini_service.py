@@ -262,7 +262,7 @@ def get_api_key() -> str:
 def get_gemini_model() -> str:
     return os.getenv(
         "GEMINI_MODEL",
-        "gemini-3.6-flash",
+        "gemini-2.5-flash",
     )
 
 
