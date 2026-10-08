@@ -21,6 +21,7 @@ services:
     volumes:
       - ./backend/vertexar.db:/app/vertexar.db
       - ./backend/uploads:/app/uploads
+      - ./backend/seed_questions.py:/app/seed_questions.py
     networks:
       - vertexar_net
 
