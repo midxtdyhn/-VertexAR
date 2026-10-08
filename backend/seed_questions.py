@@ -21,7 +21,7 @@ def seed_database():
             db.query(Question).filter(Question.quiz_id == quiz.id).delete()
             db.commit()
 
-            # 3. Data Soal Latihan Bangun Ruang SMP (Lengkap dengan Gambar)
+            # 3. Data Soal Latihan Bangun Ruang SMP (Gambar no1.jpeg - no5.jpeg)
             sample_questions = [
                 {
                     "prompt": "Sebuah kubus memiliki panjang rusuk 6 cm. Berapakah volume kubus tersebut?",
@@ -97,7 +97,7 @@ def seed_database():
                 db.add(question)
 
             db.commit()
-            print(f"Berhasil menambahkan {len(sample_questions)} soal beserta gambarnya ke database!")
+            print(f"Berhasil mereset 5 soal dengan gambar no1.jpeg - no5.jpeg ke database!")
     except Exception as err:
         print(f"Informasi seed: {err}")
 
