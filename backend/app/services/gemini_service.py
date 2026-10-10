@@ -740,18 +740,45 @@ def generate_vertexar_answer(
 
 
     # =====================================================
-    # GROQ API REQUEST (PRIORITAS 1)
+    # GROQ API EXCLUSIVE REQUEST
     # =====================================================
+
+    # Re-scan .env to catch any late edits
+    for env_path in [
+        BACKEND_DIR / ".env",
+        BACKEND_DIR / "backend" / ".env",
+        Path("/app/.env"),
+        Path.cwd() / ".env",
+        Path.cwd() / "backend" / ".env",
+    ]:
+        if env_path.exists():
+            load_dotenv(env_path, override=True)
 
     groq_api_key = os.getenv("GROQ_API_KEY", "").strip()
 
     if groq_api_key:
-        candidate_models = [
-            os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile").strip(),
+        env_model = os.getenv("GROQ_MODEL", "").strip()
+        candidate_models = []
+        if env_model:
+            candidate_models.append(env_model)
+        
+        # Standard active Groq model candidates
+        candidate_models.extend([
+            "openai/gpt-oss-120b",
+            "qwen/qwen3.8-27b",
+            "openai/gpt-oss-20b",
+            "allam-2-7b",
             "llama-3.3-70b-versatile",
             "llama-3.1-8b-instant",
-            "mixtral-8x7b-32768",
-        ]
+        ])
+
+        # De-duplicate candidate models preserving order
+        seen_models = set()
+        final_candidate_models = []
+        for m in candidate_models:
+            if m and m not in seen_models:
+                seen_models.add(m)
+                final_candidate_models.append(m)
 
         groq_messages = [{"role": "system", "content": SYSTEM_INSTRUCTION}]
         for item in history[-10:]:
@@ -762,9 +789,8 @@ def generate_vertexar_answer(
 
         groq_messages.append({"role": "user", "content": user_prompt})
 
-        for model_name in candidate_models:
-            if not model_name:
-                continue
+        # Step 1: Try candidate models
+        for model_name in final_candidate_models:
             try:
                 resp = requests.post(
                     "https://api.groq.com/openai/v1/chat/completions",
@@ -778,50 +804,68 @@ def generate_vertexar_answer(
                         "temperature": 0.35,
                         "max_tokens": 1600,
                     },
-                    timeout=20,
+                    timeout=25,
                 )
                 if resp.status_code == 200:
                     data = resp.json()
                     answer = data["choices"][0]["message"]["content"].strip()
                     answer = clean_latex_to_plain_text(answer)
+                    print(f"[GROQ SUCCESS] Respon dari model Groq: {model_name}")
                     return attach_knowledge_sources(answer, knowledge_results)
                 else:
-                    print(f"Groq model '{model_name}' status {resp.status_code}: {resp.text}")
+                    print(f"[GROQ WARN] Model '{model_name}' status {resp.status_code}: {resp.text[:150]}")
             except Exception as groq_err:
-                print(f"Groq API error on model '{model_name}': {groq_err}")
+                print(f"[GROQ ERROR] Error pada model '{model_name}': {groq_err}")
 
-    # =====================================================
-    # GEMINI API REQUEST (PRIORITAS 2 - FALLBACK)
-    # =====================================================
-
-    gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
-
-    if gemini_key:
+        # Step 2: Dynamic fallback - Query active Groq models directly from API if pre-defined candidates fail
         try:
-            with genai.Client(api_key=gemini_key) as client:
-                response = client.models.generate_content(
-                    model=get_gemini_model(),
-                    contents=contents,
-                    config=types.GenerateContentConfig(
-                        system_instruction=SYSTEM_INSTRUCTION,
-                        max_output_tokens=1600,
-                        temperature=0.35,
-                    ),
-                )
-                answer = (response.text or "").strip()
-                if answer:
-                    answer = clean_ai_answer(answer)
-                    return append_source_list(answer, knowledge_results)
-        except Exception as gemini_err:
-            print(f"Gemini API error: {gemini_err}")
+            print("[GROQ INFO] Meminta daftar model aktif secara langsung dari Groq API...")
+            r_models = requests.get(
+                "https://api.groq.com/openai/v1/models",
+                headers={"Authorization": f"Bearer {groq_api_key}"},
+                timeout=10,
+            )
+            if r_models.status_code == 200:
+                available_data = r_models.json().get("data", [])
+                # Prioritize chat completion models (filter out whisper / speech)
+                chat_models = [
+                    m["id"] for m in available_data 
+                    if "whisper" not in m["id"] and "guard" not in m["id"]
+                ]
+                for live_model in chat_models:
+                    if live_model in seen_models:
+                        continue
+                    print(f"[GROQ RETRY] Mencoba model aktif Groq: {live_model}")
+                    resp = requests.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {groq_api_key}",
+                            "Content-Type": "application/json",
+                        },
+                        json={
+                            "model": live_model,
+                            "messages": groq_messages,
+                            "temperature": 0.35,
+                            "max_tokens": 1600,
+                        },
+                        timeout=25,
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        answer = data["choices"][0]["message"]["content"].strip()
+                        answer = clean_latex_to_plain_text(answer)
+                        print(f"[GROQ SUCCESS] Respon dari model Groq dinamis: {live_model}")
+                        return attach_knowledge_sources(answer, knowledge_results)
+        except Exception as dynamic_err:
+            print(f"[GROQ DYNAMIC ERROR] Gagal query model dinamis Groq: {dynamic_err}")
 
     # =====================================================
-    # FALLBACK JAWABAN ANGGUN (MENCEGAH SERVER DROP / 502)
+    # FALLBACK ANGGUN GROQ API
     # =====================================================
 
     fallback_answer = (
         "Halo! Saya AI VertexAR, asisten belajar matematika Anda. 📐✨\n\n"
-        "Saat ini layanan AI sedang mengalami kendala koneksi sementara. "
+        "Saat ini layanan AI Groq sedang mengalami kendala koneksi sementara. "
         "Silakan coba tanyakan kembali pertanyaanmu seputar materi dan rumus bangun ruang (Kubus, Balok, Tabung, Kerucut, atau Bola) dalam beberapa saat!"
     )
     return append_source_list(fallback_answer, knowledge_results)
