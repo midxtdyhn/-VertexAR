@@ -24,9 +24,16 @@ BACKEND_DIR = Path(
 ).resolve().parents[2]
 
 
-load_dotenv(
-    BACKEND_DIR / ".env"
-)
+# Load .env from all candidate locations
+for env_file_path in [
+    BACKEND_DIR / ".env",
+    BACKEND_DIR / "backend" / ".env",
+    Path("/app/.env"),
+    Path.cwd() / ".env",
+    Path.cwd() / "backend" / ".env",
+]:
+    if env_file_path.exists():
+        load_dotenv(env_file_path, override=False)
 
 
 # =========================================================
@@ -813,8 +820,8 @@ def generate_vertexar_answer(
     # =====================================================
 
     fallback_answer = (
-        "Halo! Saya AI VertexAR. Asisten matematika Anda siap membantu.\n\n"
-        "Saat ini server API sedang dalam proses sinkronisasi kunci akses AI. "
-        "Silakan pastikan `GROQ_API_KEY` atau `GEMINI_API_KEY` telah terisi di berkas `.env` VPS Anda."
+        "Halo! Saya AI VertexAR, asisten belajar matematika Anda. 📐✨\n\n"
+        "Saat ini layanan AI sedang mengalami kendala koneksi sementara. "
+        "Silakan coba tanyakan kembali pertanyaanmu seputar materi dan rumus bangun ruang (Kubus, Balok, Tabung, Kerucut, atau Bola) dalam beberapa saat!"
     )
     return append_source_list(fallback_answer, knowledge_results)
