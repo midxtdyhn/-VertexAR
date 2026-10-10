@@ -6,8 +6,13 @@ from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+
+try:
+    from google import genai
+    from google.genai import types
+except Exception:
+    genai = None
+    types = None
 
 from app.services.knowledge_service import (
     format_knowledge_context,
@@ -280,14 +285,8 @@ def get_gemini_model() -> str:
 
 def convert_history_to_contents(
     history: list[dict[str, Any]],
-) -> list[types.Content]:
-    contents: list[
-        types.Content
-    ] = []
-
-
-# Riwayat dibatasi supaya prompt tidak terus
-# membesar pada percakapan panjang.
+) -> list[Any]:
+    contents: list[Any] = []
 
     for message in history[-16:]:
         role = str(
@@ -297,7 +296,6 @@ def convert_history_to_contents(
             )
         ).strip()
 
-
         content = str(
             message.get(
                 "content",
@@ -305,10 +303,8 @@ def convert_history_to_contents(
             )
         ).strip()
 
-
         if not content:
             continue
-
 
         gemini_role = (
             "model"
@@ -316,17 +312,17 @@ def convert_history_to_contents(
             else "user"
         )
 
-
-        contents.append(
-            types.Content(
-                role=gemini_role,
-                parts=[
-                    types.Part.from_text(
-                        text=content
-                    )
-                ],
+        if types is not None:
+            contents.append(
+                types.Content(
+                    role=gemini_role,
+                    parts=[
+                        types.Part.from_text(
+                            text=content
+                        )
+                    ],
+                )
             )
-        )
 
 
     return contents
@@ -727,16 +723,17 @@ def generate_vertexar_answer(
     )
 
 
-    contents.append(
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(
-                    text=user_prompt
-                )
-            ],
+    if types is not None:
+        contents.append(
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_text(
+                        text=user_prompt
+                    )
+                ],
+            )
         )
-    )
 
 
     # =====================================================
@@ -757,19 +754,16 @@ def generate_vertexar_answer(
     groq_api_key = os.getenv("GROQ_API_KEY", "").strip()
 
     if groq_api_key:
+        candidate_models = ["openai/gpt-oss-120b"]
         env_model = os.getenv("GROQ_MODEL", "").strip()
-        candidate_models = []
         if env_model:
             candidate_models.append(env_model)
         
         # Standard active Groq model candidates
         candidate_models.extend([
-            "openai/gpt-oss-120b",
             "qwen/qwen3.8-27b",
             "openai/gpt-oss-20b",
             "allam-2-7b",
-            "llama-3.3-70b-versatile",
-            "llama-3.1-8b-instant",
         ])
 
         # De-duplicate candidate models preserving order
@@ -809,9 +803,9 @@ def generate_vertexar_answer(
                 if resp.status_code == 200:
                     data = resp.json()
                     answer = data["choices"][0]["message"]["content"].strip()
-                    answer = clean_latex_to_plain_text(answer)
+                    answer = clean_ai_answer(answer)
                     print(f"[GROQ SUCCESS] Respon dari model Groq: {model_name}")
-                    return attach_knowledge_sources(answer, knowledge_results)
+                    return append_source_list(answer, knowledge_results)
                 else:
                     print(f"[GROQ WARN] Model '{model_name}' status {resp.status_code}: {resp.text[:150]}")
             except Exception as groq_err:
@@ -853,9 +847,9 @@ def generate_vertexar_answer(
                     if resp.status_code == 200:
                         data = resp.json()
                         answer = data["choices"][0]["message"]["content"].strip()
-                        answer = clean_latex_to_plain_text(answer)
+                        answer = clean_ai_answer(answer)
                         print(f"[GROQ SUCCESS] Respon dari model Groq dinamis: {live_model}")
-                        return attach_knowledge_sources(answer, knowledge_results)
+                        return append_source_list(answer, knowledge_results)
         except Exception as dynamic_err:
             print(f"[GROQ DYNAMIC ERROR] Gagal query model dinamis Groq: {dynamic_err}")
 
