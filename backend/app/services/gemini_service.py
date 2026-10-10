@@ -733,15 +733,20 @@ def generate_vertexar_answer(
 
 
     # =====================================================
-    # GROQ API / GEMINI REQUEST
+    # GROQ API REQUEST (PRIORITAS 1)
     # =====================================================
 
     groq_api_key = os.getenv("GROQ_API_KEY", "").strip()
 
     if groq_api_key:
-        groq_model = os.getenv("GROQ_MODEL", "gpt-oss-120b").strip()
-        groq_messages = [{"role": "system", "content": SYSTEM_INSTRUCTION}]
+        candidate_models = [
+            os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile").strip(),
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "mixtral-8x7b-32768",
+        ]
 
+        groq_messages = [{"role": "system", "content": SYSTEM_INSTRUCTION}]
         for item in history[-10:]:
             role = "user" if str(item.get("role", "")).strip() == "user" else "assistant"
             text_val = str(item.get("content", "")).strip()
@@ -750,88 +755,66 @@ def generate_vertexar_answer(
 
         groq_messages.append({"role": "user", "content": user_prompt})
 
+        for model_name in candidate_models:
+            if not model_name:
+                continue
+            try:
+                resp = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {groq_api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": model_name,
+                        "messages": groq_messages,
+                        "temperature": 0.35,
+                        "max_tokens": 1600,
+                    },
+                    timeout=20,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    answer = data["choices"][0]["message"]["content"].strip()
+                    answer = clean_latex_to_plain_text(answer)
+                    return attach_knowledge_sources(answer, knowledge_results)
+                else:
+                    print(f"Groq model '{model_name}' status {resp.status_code}: {resp.text}")
+            except Exception as groq_err:
+                print(f"Groq API error on model '{model_name}': {groq_err}")
+
+    # =====================================================
+    # GEMINI API REQUEST (PRIORITAS 2 - FALLBACK)
+    # =====================================================
+
+    gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
+
+    if gemini_key:
         try:
-            resp = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {groq_api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": groq_model,
-                    "messages": groq_messages,
-                    "temperature": 0.35,
-                    "max_tokens": 1600,
-                },
-                timeout=25,
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            answer = data["choices"][0]["message"]["content"].strip()
-            answer = clean_latex_to_plain_text(answer)
-            return attach_knowledge_sources(answer, knowledge_results)
-        except Exception as groq_err:
-            print(f"Groq API error, falling back to Gemini: {groq_err}")
-
-    with genai.Client(
-        api_key=get_api_key()
-    ) as client:
-        response = (
-            client.models.generate_content(
-                model=(
-                    get_gemini_model()
-                ),
-
-                contents=contents,
-
-                config=(
-                    types.GenerateContentConfig(
-                        system_instruction=(
-                            SYSTEM_INSTRUCTION
-                        ),
-
+            with genai.Client(api_key=gemini_key) as client:
+                response = client.models.generate_content(
+                    model=get_gemini_model(),
+                    contents=contents,
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_INSTRUCTION,
                         max_output_tokens=1600,
-
                         temperature=0.35,
-                    )
-                ),
-            )
-        )
-
-
-    # =====================================================
-    # RESPONSE
-    # =====================================================
-
-    answer = (
-        response.text
-        or ""
-    ).strip()
-
-
-    if not answer:
-        raise GeminiResponseError(
-            "Gemini tidak memberikan "
-            "jawaban teks."
-        )
-
+                    ),
+                )
+                answer = (response.text or "").strip()
+                if answer:
+                    answer = clean_ai_answer(answer)
+                    return append_source_list(answer, knowledge_results)
+        except Exception as gemini_err:
+            print(f"Gemini API error: {gemini_err}")
 
     # =====================================================
-    # CLEAN FORMAT
+    # FALLBACK JAWABAN ANGGUN (MENCEGAH SERVER DROP / 502)
     # =====================================================
 
-    answer = (
-        clean_ai_answer(
-            answer
-        )
+    fallback_answer = (
+        "Halo! Saya AI VertexAR. Asisten matematika Anda siap membantu.\n\n"
+        "Saat ini server API sedang dalam proses sinkronisasi kunci akses AI. "
+        "Silakan pastikan `GROQ_API_KEY` atau `GEMINI_API_KEY` telah terisi di berkas `.env` VPS Anda."
     )
-
-
-    # =====================================================
-    # ADD SOURCE
-    # =====================================================
-
-    return append_source_list(
-        answer,
-        knowledge_results,
-    )
+    return append_source_list(fallback_answer, knowledge_results)

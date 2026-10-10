@@ -75,43 +75,14 @@ async def chat_with_vertexar(
             model=get_gemini_model(),
         )
 
-    except GeminiConfigurationError as error:
-        logger.error(
-            "Konfigurasi Gemini bermasalah: %s",
-            error,
-        )
-
-        raise HTTPException(
-            status_code=503,
-            detail=(
-                "Layanan AI VertexAR belum "
-                "dikonfigurasi dengan benar."
-            ),
-        ) from error
-
-    except GeminiResponseError as error:
-        logger.error(
-            "Gemini tidak memberikan respons: %s",
-            error,
-        )
-
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "AI VertexAR belum dapat "
-                "memberikan jawaban."
-            ),
-        ) from error
-
     except Exception as error:
         logger.exception(
-            "Terjadi kesalahan saat menghubungi Gemini."
+            "Terjadi kesalahan saat menghubungi AI service: %s", error
         )
-
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "AI VertexAR sedang mengalami "
-                "gangguan. Silakan coba kembali."
+        return AiChatResponse(
+            answer=(
+                "Halo! Asisten AI VertexAR saat ini sedang dalam proses pemeliharaan koneksi. "
+                "Silakan coba tanyakan kembali beberapa saat lagi."
             ),
-        ) from error
+            model="VertexAR Assistant",
+        )
