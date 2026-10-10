@@ -10,12 +10,15 @@ def seed_database():
                 quiz = Quiz(
                     title="Latihan Bangun Ruang Interaktif",
                     description="Uji pemahamanmu tentang bangun ruang sisi datar dan sisi lengkung.",
-                    duration_seconds=600,
+                    duration_seconds=900,
                     is_active=True,
                 )
                 db.add(quiz)
                 db.commit()
                 db.refresh(quiz)
+            else:
+                quiz.duration_seconds = 900
+                db.commit()
 
             # 2. Hapus semua soal lama agar bersih dan ter-reset sempurna
             db.query(Question).filter(Question.quiz_id == quiz.id).delete()

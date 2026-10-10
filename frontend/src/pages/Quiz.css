@@ -386,7 +386,9 @@
   align-items: center;
   justify-content: center;
   padding: 25px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(10, 25, 47, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .vertex-quiz-modal {

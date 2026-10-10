@@ -70,7 +70,13 @@ function Quiz() {
 
         setQuiz(activeQuiz);
         setQuestions(quizQuestions);
-        setTimeLeft(activeQuiz.duration_seconds);
+        
+        // 3 menit per soal (180 detik per soal)
+        const totalDuration = activeQuiz.duration_seconds && activeQuiz.duration_seconds >= 900
+          ? activeQuiz.duration_seconds
+          : (quizQuestions.length > 0 ? quizQuestions.length : 5) * 3 * 60;
+          
+        setTimeLeft(totalDuration);
       } catch (requestError) {
         if (!componentIsMounted) {
           return;

@@ -55,7 +55,7 @@ def ensure_default_quiz() -> None:
                     "bangun ruang sisi datar dan "
                     "sisi lengkung."
                 ),
-                duration_seconds=600,
+                duration_seconds=900,
                 is_active=True,
             )
             database.add(quiz)
